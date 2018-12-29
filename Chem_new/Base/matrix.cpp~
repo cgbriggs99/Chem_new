@@ -1,0 +1,102 @@
+#ifndef __MATRIX_CPP__
+#define __MATRIX_CPP__
+
+#include "matrix.hpp"
+#include <exception>
+#include <stdexcept>
+#include <string>
+
+
+
+template<typename _T>
+compchem::Matrix<_T>::Matrix(std::initializer_list<int> shape) {
+  this->dimensions = shape.size();
+  this->shape.insert(this->shape.end(), shape.begin(), shape.end());
+  int prod = 1;
+  for(int i = 0; i < dimensions; i++) {
+    prod *= this->shape[i];
+  }
+  this->data = new _T[prod];
+  this->size = prod;
+}
+
+template<typename _T>
+compchem::Matrix<_T>::Matrix(const Matrix<_T> &copy) {
+  this->dimensions = copy.dimensions;
+  this->shape = copy.shape;
+  this->size = copy.size;
+  this->data = new _T[this->size];
+  for(int i = 0; i < this->size; i++) {
+    this->data[i] = copy.data[i];
+  }
+}
+
+template<typename _T>
+template<typename _U>
+compchem::Matrix<_T>::Matrix(const Matrix<_U> &copy) {
+  this->dimensions = copy.dimensions;
+  this->shape = copy.shape;
+  this->size = copy.size;
+  this->data = new _T[this->size];
+  for(int i = 0; i < this->size; i++) {
+    this->data[i] = (_T) copy.data[i];
+  }
+}
+
+template<typename _T>
+compchem::Matrix<_T>::Matrix(_T *data, std::initializer_list<int> shape) {
+  this->dimensions = shape.size();
+  this->shape.insert(this->shape.end(), shape.begin(), shape.end());
+  int prod = 1;
+  for(int i = 0; i < dimensions; i++) {
+    prod *= this->shape[i];
+  }
+  this->data = new _T[prod];
+  this->size = prod;
+  for(int i = 0; i < prod; i++) {
+    this->data[i] = data[i];
+  }
+}
+
+template<typename _T>
+compchem::Matrix<_T>::~Matrix() {
+  delete[] (this->data);
+}
+
+template<typename _T>
+_T &compchem::Matrix<_T>::getEntry(std::initializer_list<int> index) {
+  if(this->dimensions != index.size()) {
+    throw(new std::length_error("Error: Attempted to index with incorrect dimensions. Expected: " + std::to_string(this->dimensions) + "; got: " + std::to_string(index.size()) + "\n"));
+  }
+  int offset = 0;
+  int prod = 1;
+
+  for(int i = this->dimensions - 1; i >= 0; i++) {
+    if(index[i] >= this->shape[i] || this->shape[i] < 0) {
+      throw(new std::out_of_range("Error: Index out of range. Expected between 0 and " + std::to_string(this->shape[i]) + ", got " + std::to_string(index[i]) + "\n"));
+    }
+    offset += index[i] * prod;
+    prod *= index[i];
+  }
+  return (this->data[offset]);
+}
+  
+template<typename _T>
+const _T & const compchem::Matrix<_T>::getEntry(std::initializer_list<int> index) {
+  if(this->dimensions != index.size()) {
+    throw(new std::length_error("Error: Attempted to index with incorrect dimensions. Expected: " + std::to_string(this->dimensions) + "; got: " + std::to_string(index.size()) + "\n"));
+  }
+  int offset = 0;
+  int prod = 1;
+
+  for(int i = this->dimensions - 1; i >= 0; i++) {
+    if(index[i] >= this->shape[i] || this->shape[i] < 0) {
+      throw(new std::out_of_range("Error: Index out of range. Expected between 0 and " + std::to_string(this->shape[i]) + ", got " + std::to_string(index[i]) + "\n"));
+    }
+    offset += index[i] * prod;
+    prod *= index[i];
+  }
+  return (this->data[offset]);
+}
+
+#endif
