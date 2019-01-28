@@ -39,11 +39,14 @@ public:
 	}
 };
 
+/*
+ * Test base class. Unit tests should inherit this class.
+ */
 class Test {
 private:
-	int fails;
-	int successes;
-	int total;
+	int fails;	//number of fails.
+	int successes; //number of passes.
+	int total;	//number of tests.
 public:
 	Test() {
 		fails = 0;
@@ -51,6 +54,9 @@ public:
 		total = 0;
 	}
 
+	/*
+	 * Destructor for the test class. It prints the total successes and fails, and if all the tests were successfull.
+	 */
 	virtual ~Test() {
 		if(fails != 0) {
 			printf("%d tests failed out of %d with %d successes.\n", fails, total, successes);
@@ -59,6 +65,11 @@ public:
 		}
 	}
 
+	/*
+	 * This is the basic function for assertions. It takes a condition and, if true, returns and increments
+	 * the number of successes and the number of tests, if false, increments the number of fails and throws an
+	 * exception.
+	 */
 	virtual bool assert(bool cond) {
 		total++;
 		if(cond) {
@@ -70,8 +81,11 @@ public:
 		return (cond);
 	}
 
+	/*
+	 * Wrapper for the basic assertion function. This prints the status of the tests, whether it was a success and how
+	 * many successes and failures have been met.
+	 */
 	virtual bool assert_print(bool cond) {
-		total++;
 		try {
 			assert(cond);
 			printf("Success: s %d f %d\n", successes, fails);
@@ -82,34 +96,58 @@ public:
 		return (cond);
 	}
 
+	/*
+	 * Returns the number of successes.
+	 */
 	virtual int getSuccesses() {
 		return (successes);
 	}
 
+	/*
+	 * Returns the number of failures.
+	 */
 	virtual int getFails() {
 		return (fails);
 	}
 
+	/*
+	 * Returns the number of tests done so far.
+	 */
 	virtual int getTotalTests() {
 		return (total);
 	}
 
+	/*
+	 * Increments the number of successes without incrementing the number of tests.
+	 */
 	virtual void incrementSuccess() {
 		successes++;
 	}
 
+	/*
+	 * Increments the number of fails without incrementing the number of tests.
+	 */
 	virtual void incrementFails() {
 		fails++;
 	}
 
+	/*
+	 * See incrementSuccess.
+	 */
 	virtual void decrementSuccess() {
 		successes--;
 	}
 
+	/*
+	 * See incrementFails.
+	 */
 	virtual void decrementFails() {
 		fails--;
 	}
 
+	/*
+	 * This is the function that should be called to run the tests. It must be overridden in the subclass.
+	 */
 	virtual void runTest() = 0;
 };
 
