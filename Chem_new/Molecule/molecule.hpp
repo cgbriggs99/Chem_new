@@ -10,7 +10,7 @@
 
 #include <vector>
 
-namespace comphcem {
+namespace compchem {
 
 class Atom {
 private:
