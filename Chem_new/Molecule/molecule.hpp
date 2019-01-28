@@ -9,8 +9,13 @@
 #define MOLECULE_HPP_
 
 #include <vector>
+#include "../Base/matrix.hpp"
 
 namespace compchem {
+
+typedef enum {
+
+} rotor_type;
 
 class Atom {
 private:
@@ -55,7 +60,7 @@ public:
 	}
 
 	int getAtomicNum() const {
-		return atomic_num;
+		return (atomic_num);
 	}
 
 	void setAtomicNum(int atomicNum) {
@@ -63,7 +68,7 @@ public:
 	}
 
 	int getCharge() const {
-		return charge;
+		return (charge);
 	}
 
 	void setCharge(int charge) {
@@ -71,7 +76,7 @@ public:
 	}
 
 	double getMass() const {
-		return mass;
+		return (mass);
 	}
 
 	void setMass(double mass) {
@@ -79,7 +84,7 @@ public:
 	}
 
 	double getTrueCharge() const {
-		return true_charge;
+		return (true_charge);
 	}
 
 	void setTrueCharge(double trueCharge) {
@@ -89,10 +94,35 @@ public:
 
 class AbstractMolecule {
 public:
-	virtual ~AbstractMolecule();
+	AbstractMolecule() {
+		;
+	}
+	virtual ~AbstractMolecule() = default;
 
-	virtual std::vector<Atom> getAtoms();
+	virtual std::vector<Atom> &getAtoms();
+	virtual int getNumAtoms() {
+		return (this->getAtoms().size());
+	}
 	virtual void addAtom(Atom a);
+
+	virtual void setDistances(const Matrix<double> &dists) = 0;
+	virtual Matrix<double> &getDistances() = 0;
+
+	virtual void setBondAngles(const Matrix<double> &angles) = 0;
+	virtual Matrix<double> &getBondAngles() = 0;
+
+	virtual void setPlaneAngles(const Matrix<double> &angles) = 0;
+	virtual Matrix<double> &getPlaneAngles() = 0;
+
+	virtual void setTorsionAngles(const Matrix<double> &angles) = 0;
+	virtual Matrix<double> &getTorsionAngles() = 0;
+
+	virtual void setRotationalConstants(std::vector<double> &rots) = 0;
+	virtual std::vector<double> &getRotationalConstants() = 0;
+
+	virtual void setRotorType(rotor_type rot) = 0;
+	virtual rotor_type getRotorType() = 0;
+
 };
 }
 

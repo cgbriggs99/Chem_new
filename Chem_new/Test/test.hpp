@@ -14,7 +14,7 @@
 
 
 namespace test {
-
+//
 class AssertionFailedException : public std::exception {
 private:
 	std::string message;

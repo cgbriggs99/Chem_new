@@ -14,14 +14,14 @@
 
 namespace compchem {
 
-template<typename _T, typename _Alloc = std::allocator<_T>>
+template<typename _T, typename _Alloc = std::allocator<_T> >
 class Matrix {
 public:
   //Constructors and destructor.
   Matrix(std::initializer_list<int> shape);
   Matrix(const Matrix<_T> &copy);
 
-  template<typename _U, typename _Alloc2 = std::allocator<_U>>
+  template<typename _U, typename _Alloc2 = std::allocator<_U> >
   Matrix(const Matrix<_U, _Alloc2> &copy_and_cast);
   Matrix(_T *data, std::initializer_list<int> shape);
 

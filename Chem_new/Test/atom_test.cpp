@@ -28,7 +28,13 @@ public:
 		assert(hydrogen->getZ() == 0);
 	}
 
-	void runTests() override {
+	void runTest() override {
 		testStorage();
 	}
 };
+
+int main(void) {
+	AtomTest test;
+	test.runTest();
+	return (0);
+}
