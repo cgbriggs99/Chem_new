@@ -14,7 +14,7 @@
 namespace compchem {
 
 typedef enum {
-
+	SPHERICAL, LINEAR, OBLATE, PROLATE, ASYMMETRIC
 } rotor_type;
 
 class Atom {
@@ -97,31 +97,36 @@ public:
 	AbstractMolecule() {
 		;
 	}
-	virtual ~AbstractMolecule() = default;
+	virtual ~AbstractMolecule() = 0;
 
-	virtual std::vector<Atom> &getAtoms();
+	virtual const std::vector<Atom> &getAtoms() = 0;
 	virtual int getNumAtoms() {
 		return (this->getAtoms().size());
 	}
-	virtual void addAtom(Atom a);
+	virtual void addAtom(Atom a) = 0;
 
 	virtual void setDistances(const Matrix<double> &dists) = 0;
-	virtual Matrix<double> &getDistances() = 0;
+	virtual const Matrix<double> &getDistances() = 0;
 
 	virtual void setBondAngles(const Matrix<double> &angles) = 0;
-	virtual Matrix<double> &getBondAngles() = 0;
+	virtual const Matrix<double> &getBondAngles() = 0;
 
 	virtual void setPlaneAngles(const Matrix<double> &angles) = 0;
-	virtual Matrix<double> &getPlaneAngles() = 0;
+	virtual const Matrix<double> &getPlaneAngles() = 0;
 
 	virtual void setTorsionAngles(const Matrix<double> &angles) = 0;
-	virtual Matrix<double> &getTorsionAngles() = 0;
+	virtual const Matrix<double> &getTorsionAngles() = 0;
+
+	virtual void setMoments(std::vector<double> &moms) = 0;
+	virtual const std::vector<double> &getMoments() = 0;
 
 	virtual void setRotationalConstants(std::vector<double> &rots) = 0;
-	virtual std::vector<double> &getRotationalConstants() = 0;
+	virtual const std::vector<double> &getRotationalConstants() = 0;
 
 	virtual void setRotorType(rotor_type rot) = 0;
 	virtual rotor_type getRotorType() = 0;
+
+	virtual void translateAtoms(const std::vector<double> &diff) = 0;
 
 };
 }

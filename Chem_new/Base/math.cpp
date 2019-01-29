@@ -44,3 +44,14 @@ double compchem::dotprod(std::vector<double> v1, std::vector<double> v2) {
 	}
 	return (out);
 }
+
+int compchem::compareDoubles(double a, double b, double diff) {
+	double off = diff * (a > b)? a: b;
+	if(fabs(a - b) <= off) {
+		return (0);
+	} else if(a < b) {
+		return (-1);
+	} else {
+		return (1);
+	}
+}

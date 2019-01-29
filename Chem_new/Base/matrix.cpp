@@ -72,13 +72,13 @@ _T &compchem::Matrix<_T, _Alloc>::getEntry(std::initializer_list<int> index) {
   int offset = 0;
   int prod = 1;
 
-  for(int i = this->dimensions - 1; i >= 0; i++) {
+  for(int i = this->dimensions - 1; i >= 0; i--) {
     if(index.begin()[i] >= this->shape[i] || this->shape[i] < 0) {
       throw(new std::out_of_range("Error: Index out of range. Expected between 0 and " + std::to_string(this->shape[i]) +
     		  ", got " + std::to_string(index.begin()[i]) + "\n"));
     }
     offset += index.begin()[i] * prod;
-    prod *= index.begin()[i];
+    prod *= this->shape[i];
   }
   return (this->data[offset]);
 }
@@ -91,14 +91,15 @@ const _T &compchem::Matrix<_T, _Alloc>::getEntry(std::initializer_list<int> inde
   }
   int offset = 0;
   int prod = 1;
+  const int *list = index.begin();
 
-  for(int i = this->dimensions - 1; i >= 0; i++) {
-    if(index[i] >= this->shape[i] || this->shape[i] < 0) {
+  for(int i = this->dimensions - 1; i >= 0; i--) {
+    if(list[i] >= this->shape[i] || this->shape[i] < 0) {
       throw(new std::out_of_range("Error: Index out of range. Expected between 0 and " +
     		  std::to_string(this->shape[i]) + ", got " + std::to_string(index.begin()[i]) + "\n"));
     }
     offset += index.begin()[i] * prod;
-    prod *= index.begin()[i];
+    prod *= this->shape[i];
   }
   return (this->data[offset]);
 }

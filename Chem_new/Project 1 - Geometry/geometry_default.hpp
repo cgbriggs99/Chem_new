@@ -9,12 +9,15 @@
 #define GEOMETRY_DEFAULT_HPP_
 
 #include "geometry.hpp"
+#include "../Base/eigenvalues.hpp"
 
 namespace compchem {
 
 namespace strategies {
 
 class DefaultGeometryStrategy : public GeometryCalcStrategy {
+private:
+	EigenvalueStrategy<double> *eigenstrat;
 public:
 	DefaultGeometryStrategy() {
 		;
@@ -29,6 +32,7 @@ public:
 	compchem::Matrix<double> &findPlaneAngles(compchem::AbstractMolecule &mol) override;
 	compchem::Matrix<double> &findTorsionAngles(compchem::AbstractMolecule &mol) override;
 	std::vector<double> &findRotationalConstants(compchem::AbstractMolecule &mol) override;
+	std::vector<double> &findCenterOfMass(compchem::AbstractMolecule &mol) override;
 	compchem::rotor_type findRotor(compchem::AbstractMolecule &mol) override;
 
 };

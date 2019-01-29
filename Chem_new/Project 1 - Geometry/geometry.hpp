@@ -19,12 +19,13 @@ public:
 	GeometryCalcStrategy() = default;
 	virtual ~GeometryCalcStrategy() = default;
 
-	virtual compchem::Matrix<double> &findDistances(compchem::AbstractMolecule &mol) = 0;
-	virtual compchem::Matrix<double> &findBondAngles(compchem::AbstractMolecule &mol) = 0;
-	virtual compchem::Matrix<double> &findPlaneAngles(compchem::AbstractMolecule &mol) = 0;
-	virtual compchem::Matrix<double> &findTorsionAngles(compchem::AbstractMolecule &mol) = 0;
-	virtual std::vector<double> &findRotationalConstants(compchem::AbstractMolecule &mol) = 0;
-	virtual compchem::rotor_type findRotor(compchem::AbstractMolecule &mol) = 0;
+	virtual compchem::Matrix<double> &findDistances(const compchem::AbstractMolecule &mol) = 0;
+	virtual compchem::Matrix<double> &findBondAngles(const compchem::AbstractMolecule &mol) = 0;
+	virtual compchem::Matrix<double> &findPlaneAngles(const compchem::AbstractMolecule &mol) = 0;
+	virtual compchem::Matrix<double> &findTorsionAngles(const compchem::AbstractMolecule &mol) = 0;
+	virtual std::vector<double> &findCenterOfMass(const compchem::AbstractMolecule &mol) = 0;
+	virtual std::vector<double> &findRotationalConstants(const compchem::AbstractMolecule &mol) = 0;
+	virtual compchem::rotor_type findRotor(const compchem::AbstractMolecule &mol) = 0;
 };
 
 }

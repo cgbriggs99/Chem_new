@@ -38,15 +38,19 @@ public:
   //Getters and setters.
   virtual _T &getEntry(std::initializer_list<int> index);
   virtual const _T &getEntry(std::initializer_list<int> index) const;
-  virtual int getSize() {
+  virtual int getSize() const {
     return (this->size);
   }
   
-  virtual const int *getShape() {
+  virtual const std::vector<int> &getShape() const {
     return (this->shape);
   }
 
-  virtual int getDimension() {
+  virtual int getShape(int ind) const {
+	  return (this->shape[ind]);
+  }
+
+  virtual int getDimension() const {
     return (this->dimensions);
   }
 };
