@@ -1,1 +1,3 @@
 suffixes.mk
+.cproject
+.settings/language.settings.xml
