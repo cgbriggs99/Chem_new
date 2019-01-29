@@ -10,6 +10,7 @@
 
 #include <complex>
 #include "eigenvalues.hpp"
+#include <lapacke.h>
 
 namespace compchem {
 namespace strategies {
@@ -18,6 +19,10 @@ namespace strategies {
 template<typename T>
 class LapackEigenvalues : public compchem::EigenvalueStrategy<T> {
 public:
+	LapackEigenvalues() {
+		;
+	}
+
 	~LapackEigenvalues() {
 		;
 	}

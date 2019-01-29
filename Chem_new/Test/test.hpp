@@ -61,8 +61,25 @@ public:
 		if(fails != 0) {
 			printf("%d tests failed out of %d with %d successes.\n", fails, total, successes);
 		} else {
-			printf("%d test executed, all passed.\n", total);
+			printf("%d tests executed, all passed.\n", total);
 		}
+	}
+
+	/*
+	 * This is the basic function for assertions. It takes a condition and, if true, returns and increments
+	 * the number of successes and the number of tests, if false, increments the number of fails, throws an
+	 * exception and prints.
+	 */
+	virtual bool assert(bool cond) {
+		total++;
+		if(cond) {
+			successes++;
+		} else {
+			fails++;
+			printf("Failure: s %d f %d\n", successes, fails);
+			throw(new AssertionFailedException(successes, fails));
+		}
+		return (cond);
 	}
 
 	/*
@@ -70,7 +87,7 @@ public:
 	 * the number of successes and the number of tests, if false, increments the number of fails and throws an
 	 * exception.
 	 */
-	virtual bool assert(bool cond) {
+	virtual bool assert_noprint(bool cond) {
 		total++;
 		if(cond) {
 			successes++;

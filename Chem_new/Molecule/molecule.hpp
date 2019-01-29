@@ -13,6 +13,8 @@
 
 namespace compchem {
 
+double amu(int z);
+
 typedef enum {
 	SPHERICAL, LINEAR, OBLATE, PROLATE, ASYMMETRIC
 } rotor_type;
@@ -35,15 +37,15 @@ public:
 		true_charge = charge;
 	}
 
-	double getX() {
+	double getX() const {
 		return (pos[0]);
 	}
 
-	double getY() {
+	double getY() const {
 		return (pos[1]);
 	}
 
-	double getZ() {
+	double getZ() const {
 		return (pos[2]);
 	}
 
@@ -97,36 +99,40 @@ public:
 	AbstractMolecule() {
 		;
 	}
-	virtual ~AbstractMolecule() = 0;
+	virtual ~AbstractMolecule() = default;
 
-	virtual const std::vector<Atom> &getAtoms() = 0;
-	virtual int getNumAtoms() {
+	virtual const std::vector<Atom> &getAtoms() const = 0;
+	virtual int getNumAtoms() const {
 		return (this->getAtoms().size());
 	}
 	virtual void addAtom(Atom a) = 0;
 
 	virtual void setDistances(const Matrix<double> &dists) = 0;
-	virtual const Matrix<double> &getDistances() = 0;
+	virtual const Matrix<double> &getDistances() const = 0;
 
 	virtual void setBondAngles(const Matrix<double> &angles) = 0;
-	virtual const Matrix<double> &getBondAngles() = 0;
+	virtual const Matrix<double> &getBondAngles() const = 0;
 
 	virtual void setPlaneAngles(const Matrix<double> &angles) = 0;
-	virtual const Matrix<double> &getPlaneAngles() = 0;
+	virtual const Matrix<double> &getPlaneAngles() const = 0;
 
 	virtual void setTorsionAngles(const Matrix<double> &angles) = 0;
-	virtual const Matrix<double> &getTorsionAngles() = 0;
+	virtual const Matrix<double> &getTorsionAngles() const = 0;
 
-	virtual void setMoments(std::vector<double> &moms) = 0;
-	virtual const std::vector<double> &getMoments() = 0;
+	virtual void setMoments(const compchem::Matrix<double> &moms) = 0;
+	virtual const compchem::Matrix<double> &getMoments() const = 0;
 
-	virtual void setRotationalConstants(std::vector<double> &rots) = 0;
-	virtual const std::vector<double> &getRotationalConstants() = 0;
+	virtual void setPrincipleMoments(const std::vector<double> &moms) = 0;
+	virtual const std::vector<double> &getPrincipleMoments() const = 0;
+
+	virtual void setRotationalConstants(const std::vector<double> &rots) = 0;
+	virtual const std::vector<double> &getRotationalConstants() const = 0;
 
 	virtual void setRotorType(rotor_type rot) = 0;
-	virtual rotor_type getRotorType() = 0;
+	virtual rotor_type getRotorType() const = 0;
 
 	virtual void translateAtoms(const std::vector<double> &diff) = 0;
+	virtual void translateCOM(const std::vector<double> &diff) = 0;
 
 };
 }

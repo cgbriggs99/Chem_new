@@ -15,7 +15,7 @@ namespace compchem {
 template<typename T>
 class EigenvalueStrategy {
 public:
-	virtual ~EigenvalueStrategy() = 0;
+	virtual ~EigenvalueStrategy() = default;
 
 	virtual Matrix<T> &eigenvals(const Matrix<T> &mat) = 0;
 	virtual Matrix<T> &eigenvecs_left(const Matrix<T> &mat) = 0;

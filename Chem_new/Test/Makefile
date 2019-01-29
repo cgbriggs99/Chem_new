@@ -2,16 +2,18 @@
 include ../suffixes.mk
 
 CXXFLAGS=-g3 -ggdb
-EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC)
+LDLIBS=-llapacke
+EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC) eigenvalue_test$(EXEC) geometry_test$(EXEC)
 
 .PHONY: all
-all: test_test atom_test matrix_test
+all: test_test atom_test matrix_test eigenvalue_test geometry_test
 
 .PHONY: run_tests
 run_tests: $(EXECS)
 	./test_test > ./logs/test_test.log
 	./atom_test > ./logs/atom_test.log
 	./matrix_test > ./logs/matrix_test.log
+	./eigenvalue_test > ./logs/eigenvalue_test.log
 	
 .PHONY: clean
 clean:
@@ -23,3 +25,10 @@ test_test: test_test.cpp test.hpp
 atom_test: atom_test.cpp ../Molecule/molecule.hpp test.hpp
 
 matrix_test: matrix_test.cpp ../Base/matrix.hpp ../Base/matrix.cpp
+
+eigenvalue_test: eigenvalue_test.cpp ../Base/matrix.hpp ../Base/matrix.cpp ../Base/math.hpp ../Base/math.cpp ../Base/eigenvalues.hpp ../Base/eigenvalues_default.hpp ../Base/eigenvalues_default_double.cpp
+
+geometry_test: geometry_test.cpp ../Project-1/geometry.hpp ../Project-1/geometry_default.hpp \
+	../Project-1/geometry_default.cpp test.hpp ../Molecule/molecule.hpp ../Molecule/molecule.cpp \
+	../Molecule/molecule_default.hpp ../Base/matrix.hpp ../Base/matrix.cpp ../Base/eigenvalues.hpp \
+	../Base/eigenvalues_default.hpp ../Base/eigenvalues_default_double.cpp ../Base/math.o

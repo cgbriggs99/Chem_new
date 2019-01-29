@@ -51,8 +51,8 @@ compchem::Matrix<_T, _Alloc>::Matrix(_T *data, std::initializer_list<int> shape)
   for(int i = 0; i < dimensions; i++) {
     prod *= this->shape[i];
   }
-  this->data = this->allocator.allocate(this->size);
   this->size = prod;
+  this->data = this->allocator.allocate(this->size);
   for(int i = 0; i < prod; i++) {
     this->data[i] = data[i];
   }

@@ -14,6 +14,10 @@ molecule:
 .PHONY: base
 base:
 	$(MAKE) -C ./Base all
+	
+.PHONY: project1
+project1:
+	$(MAKE) -C ./Project-1 all
 
 .PHONY: run_tests
 run_tests:
@@ -23,3 +27,5 @@ run_tests:
 clean:
 	rm -rf *.o
 	$(MAKE) -C ./Test clean
+	$(MAKE) -C ./Base clean
+	$(MAKE) -C ./Molecule clean

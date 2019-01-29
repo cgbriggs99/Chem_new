@@ -24,7 +24,9 @@ public:
 	virtual compchem::Matrix<double> &findPlaneAngles(const compchem::AbstractMolecule &mol) = 0;
 	virtual compchem::Matrix<double> &findTorsionAngles(const compchem::AbstractMolecule &mol) = 0;
 	virtual std::vector<double> &findCenterOfMass(const compchem::AbstractMolecule &mol) = 0;
-	virtual std::vector<double> &findRotationalConstants(const compchem::AbstractMolecule &mol) = 0;
+	virtual std::vector<double> &findPrincipleMoments(const compchem::AbstractMolecule &mol) = 0;
+//	virtual std::vector<double> &findRotationalConstants(const compchem::AbstractMolecule &mol) = 0;
+	virtual compchem::Matrix<double> &findMoments(const compchem::AbstractMolecule &mol) = 0;
 	virtual compchem::rotor_type findRotor(const compchem::AbstractMolecule &mol) = 0;
 };
 
