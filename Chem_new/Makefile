@@ -1,7 +1,7 @@
 
 
 .PHONY: all
-all: molecule test
+all: molecule test base project1
 
 .PHONY: test
 test: 
@@ -29,3 +29,4 @@ clean:
 	$(MAKE) -C ./Test clean
 	$(MAKE) -C ./Base clean
 	$(MAKE) -C ./Molecule clean
+	$(MAKE) -C ./Project-1 clean
