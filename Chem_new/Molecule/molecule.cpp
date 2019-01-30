@@ -58,5 +58,6 @@ compchem::strategies::DefaultMolecule::~DefaultMolecule()  {
 	if(principle != nullptr) {
 		delete principle;
 	}
+	delete atoms;
 }
 

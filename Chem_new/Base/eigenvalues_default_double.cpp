@@ -16,8 +16,8 @@ template<>
 compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigenvals(
 		const compchem::Matrix<double> &mat) {
 	double *work = (double *) malloc((size_t) (mat.getSize() * sizeof(double)));
-	double *out = new double[mat.getShape(0)];
-	double *temp = new double[mat.getShape(0)];
+	double *out = (double *) malloc(mat.getShape(0) * sizeof(double));
+	double *temp = (double *) malloc(mat.getShape(0) * sizeof(double));
 	for (int i = 0; i < mat.getShape(0); i++) {
 		for (int j = 0; j < mat.getShape(1); j++) {
 			work[i * mat.getShape(1) + j] = mat.getEntry( { i, j });
@@ -28,8 +28,8 @@ compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigen
 			mat.getShape(1));
 	free(work);
 	Matrix<double> &retval = *new Matrix<double>(out, { mat.getShape(0) });
-	delete out;
-	delete temp;
+	free(out);
+	free(temp);
 
 	if (info != 0) {
 		printf("Error %d\n", info);

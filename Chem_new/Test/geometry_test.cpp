@@ -34,8 +34,8 @@ public:
 	}
 
 	void readGeomFile(const char *filename) {
-		int num;
-		FILE *fp = fopen(filename, "r+");
+		int num = 0;
+		FILE *fp = fopen(filename, "r");
 		int ignore = fscanf(fp, "%d", &num);
 
 
@@ -175,7 +175,8 @@ public:
 		molecule->setDistances(dist);
 		compchem::Matrix<double> &bonds = strat->findBondAngles(*molecule);
 		molecule->setBondAngles(bonds);
-		compchem::Matrix<double> &plane = strat->findPlaneAngles(*molecule), &torque = strat->findTorsionAngles(*molecule);
+		compchem::Matrix<double> &plane = strat->findPlaneAngles(*molecule);
+		compchem::Matrix<double> &torque = strat->findTorsionAngles(*molecule);
 		molecule->setPlaneAngles(plane);
 		molecule->setTorsionAngles(torque);
 		std::vector<double> &com = strat->findCenterOfMass(*molecule);
@@ -197,6 +198,7 @@ public:
 		delete &dist;
 		delete &bonds;
 		delete &plane;
+		delete &torque;
 		delete &com;
 		delete &moms;
 		delete &rots;
@@ -205,7 +207,11 @@ public:
 };
 
 int main(void) {
-	chdir("./Test/data/geometry");
+	char buff[1000];
+	 getcwd(buff, 999);
+	 puts(buff);
+
+	chdir("./data/geometry");
 	GeometryTest acetaldehyde("./acetaldehyde"), benzene("./benzene"), allene("./allene");
 
 	acetaldehyde.runTest();
