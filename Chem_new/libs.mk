@@ -1,0 +1,1 @@
+LAPACKDIR=C:/lapack

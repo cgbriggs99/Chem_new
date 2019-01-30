@@ -1,1 +1,1 @@
-EXEC=
+EXEC=.exe

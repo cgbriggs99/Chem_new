@@ -1,7 +1,7 @@
-
+include delete.mk
 
 .PHONY: all
-all: molecule base project1 test
+all: link_dlls molecule base project1 test
 
 .PHONY: test
 test: 
@@ -33,12 +33,16 @@ run_tests:
 	$(MAKE) -C ./Test run_tests
 	$(info Finished running unit tests. Output placed in Test/logs directory.)
 	
+.PHONY: link_dlls
+link_dlls:
+	$(MAKE) -C ./Windows all
+	
 .PHONY: clean
 clean:
 	$(info Cleaning)
-	rm -rf *.o
 	$(MAKE) -C ./Test clean
 	$(MAKE) -C ./Base clean
 	$(MAKE) -C ./Molecule clean
 	$(MAKE) -C ./Project-1 clean
+	$(MAKE) -C ./Windows clean
 	$(info Finished cleaning)
