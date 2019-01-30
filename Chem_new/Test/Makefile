@@ -25,7 +25,9 @@ run_tests: $(EXECS)
 .PHONY: clean
 clean:
 	$(RM) $(EXECS)
-	$(RM) $(call escape,$(wildcard $(CURDIR)/logs/*.log))
+ifneq ($(wildcard $(CURDIR)/logs/*.log),)
+		$(RM) $(call escape,$(wildcard $(CURDIR)/logs/*.log))
+endif
 
 test_test: test_test.cpp test.hpp
 
