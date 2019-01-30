@@ -1,19 +1,21 @@
 
 include ../suffixes.mk
 
-CXXFLAGS=-g3 -ggdb
-LDLIBS=-llapacke
+CXXFLAGS=-g3 -ggdb -I /usr/local/psi4/include
+LDLIBS=-llapacke -L /usr/local/psi4/lib -lint -lderiv -lxc -lgg
 EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC) eigenvalue_test$(EXEC) geometry_test$(EXEC)
+VGFLAGS=--leak-check=full --show-leak-kinds=all -v
 
 .PHONY: all
 all: test_test atom_test matrix_test eigenvalue_test geometry_test
 
 .PHONY: run_tests
 run_tests: $(EXECS)
-	./test_test > ./logs/test_test.log
-	./atom_test > ./logs/atom_test.log
-	./matrix_test > ./logs/matrix_test.log
-	./eigenvalue_test > ./logs/eigenvalue_test.log
+	valgrind $(VGFLAGS) --log-file="./logs/test_memcheck.log" ./test_test > ./logs/test_test.log
+	valgrind $(VGFLAGS) --log-file="./logs/atom_memcheck.log" ./atom_test > ./logs/atom_test.log
+	valgrind $(VGFLAGS) --log-file="./logs/matrix_memcheck.log" ./matrix_test > ./logs/matrix_test.log
+	valgrind $(VGFLAGS) --log-file="./logs/eigenvalue_memcheck.log" ./eigenvalue_test > ./logs/eigenvalue_test.log
+	valgrind $(VGFLAGS) --log-file="./logs/geometry_memcheck.log" ./geometry_test > ./logs/geometry_test.log
 	
 .PHONY: clean
 clean:
