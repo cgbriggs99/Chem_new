@@ -105,7 +105,7 @@ public:
 	 * My body for the molecule class. Will become deprecated.
 	 */
 	virtual const std::vector<Atom> &getAtoms() const = 0;
-	virtual int getNumAtoms() const {
+	virtual int natom() const {
 		return (this->getAtoms().size());
 	}
 	virtual void addAtom(Atom a) = 0;
@@ -136,6 +136,11 @@ public:
 
 	virtual void translateAtoms(const std::vector<double> &diff) = 0;
 	virtual void translateCOM(const std::vector<double> &diff) = 0;
+
+	virtual double x(int i) const = 0;
+	virtual double y(int i) const = 0;
+	virtual double z(int i) const = 0;
+	virtual double mass(int i) const = 0;
 };
 }
 

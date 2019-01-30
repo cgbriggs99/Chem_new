@@ -12,7 +12,7 @@
 #include "/usr/local/psi4/include/psi4/libmints/molecule.h"
 
 compchem::Matrix<double> &
-compchem::strategies::DefaultGeometryStrategy::findDistances(const psi::Molecule &mol) {
+compchem::strategies::DefaultGeometryStrategy::findDistances(const compchem::AbstractMolecule &mol) {
 	compchem::Matrix<double> *out =
 			new compchem::Matrix<double>({mol.natom(), mol.natom()});
 
@@ -30,7 +30,7 @@ compchem::strategies::DefaultGeometryStrategy::findDistances(const psi::Molecule
 }
 
 compchem::Matrix<double> &
-compchem::strategies::DefaultGeometryStrategy::findBondAngles(const psi::Molecule &mol) {
+compchem::strategies::DefaultGeometryStrategy::findBondAngles(const compchem::AbstractMolecule &mol) {
 	compchem::Matrix<double> *out =
 			new compchem::Matrix<double>({mol.natom(),
 		mol.natom(), mol.natom()});
@@ -58,7 +58,7 @@ compchem::strategies::DefaultGeometryStrategy::findBondAngles(const psi::Molecul
 }
 
 compchem::Matrix<double> &
-compchem::strategies::DefaultGeometryStrategy::findPlaneAngles(const psi::Molecule &mol, const compchem::Matrix<double> &bond_angles) {
+compchem::strategies::DefaultGeometryStrategy::findPlaneAngles(const compchem::AbstractMolecule &mol, const compchem::Matrix<double> &bond_angles) {
 	Matrix<double> *out = new Matrix<double>({mol.natom(), mol.natom(),
 		mol.natom(), mol.natom()});
 
@@ -106,7 +106,7 @@ compchem::strategies::DefaultGeometryStrategy::findPlaneAngles(const psi::Molecu
 }
 
 compchem::Matrix<double> &
-compchem::strategies::DefaultGeometryStrategy::findTorsionAngles(const psi::Molecule &mol, const compchem::Matrix<double> &bond_angles) {
+compchem::strategies::DefaultGeometryStrategy::findTorsionAngles(const compchem::AbstractMolecule &mol, const compchem::Matrix<double> &bond_angles) {
 	Matrix<double> *out = new Matrix<double>({mol.natom(), mol.natom(),
 		mol.natom(), mol.natom()});
 
@@ -157,7 +157,7 @@ compchem::strategies::DefaultGeometryStrategy::findTorsionAngles(const psi::Mole
 }
 
 std::vector<double> &
-compchem::strategies::DefaultGeometryStrategy::findCenterOfMass(const psi::Molecule &mol) {
+compchem::strategies::DefaultGeometryStrategy::findCenterOfMass(const compchem::AbstractMolecule &mol) {
 	std::vector<double> *out = new std::vector<double>({0, 0, 0});
 
 	double mass = 0;
@@ -175,7 +175,7 @@ compchem::strategies::DefaultGeometryStrategy::findCenterOfMass(const psi::Molec
 }
 
 compchem::Matrix<double> &compchem::strategies::DefaultGeometryStrategy::findMoments(
-		const psi::Molecule &mol) {
+		const compchem::AbstractMolecule &mol) {
 	Matrix<double> *moments = new Matrix<double>({3, 3});
 	moments->getEntry({0, 0}) = 0;
 	moments->getEntry({1, 0}) = 0;
@@ -243,20 +243,20 @@ compchem::strategies::DefaultGeometryStrategy::findPrincipleMoments(const compch
 	return (out);
 }
 
-psi::RotorType compchem::strategies::DefaultGeometryStrategy::findRotor(const std::vector<double> &moms) {
+compchem::rotor_type compchem::strategies::DefaultGeometryStrategy::findRotor(const std::vector<double> &moms) {
 	if(compareDoubles(moms[0], moms[1], 0.0001) == 0 && compareDoubles(moms[1], moms[2], 0.0001) == 0) {
-		return (psi::RT_SPHERICAL_TOP);
+		return (SPHERICAL);
 	}
 	if(compareDoubles(moms[0], 0, 0.0001) == 0) {
-		return (psi::RT_LINEAR);
+		return (LINEAR);
 	}
 	if(compareDoubles(moms[0], moms[1], 0.0001) == 0) {
-		return (psi::RT_SYMMETRIC_TOP);
+		return (OBLATE);
 	}
 	if(compareDoubles(moms[1], moms[2], 0.0001) == 0) {
-		return (psi::RT_SYMMETRIC_TOP);
+		return (PROLATE);
 	}
-	return (psi::RT_ASYMMETRIC_TOP);
+	return (ASYMMETRIC);
 }
 
 
