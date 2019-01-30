@@ -1,8 +1,8 @@
 
 include ../suffixes.mk
 
-CXXFLAGS=-g3 -ggdb
-LDLIBS=-llapacke
+CXXFLAGS=-g3 -ggdb -I /usr/local/psi4/include
+LDLIBS=-llapacke -L /usr/local/psi4/lib -lint -lderiv -lxc -lgg
 EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC) eigenvalue_test$(EXEC) geometry_test$(EXEC)
 VGFLAGS=--leak-check=full --show-leak-kinds=all 
 
