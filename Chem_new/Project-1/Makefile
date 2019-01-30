@@ -1,9 +1,14 @@
+include ../delete.mk
+include ../libs.mk
+
 .PHONY:all
 all: geometry_default.o
 
+CXXFLAGS=-I $(LAPACKDIR)/include
+
 .PHONY: clean
 clean:
-	rm -rf *.o
+	$(RM) *.o
 
 CXXFLAGS=-I /usr/local/psi4/include
 LDFLAGS=-L /usr/local/psi4/lib -lint

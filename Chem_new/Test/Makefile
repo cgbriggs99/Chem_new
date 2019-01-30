@@ -1,8 +1,13 @@
-
+include ../Windows/escape.mk
+include ../libs.mk
 include ../suffixes.mk
+include ../delete.mk
 
-CXXFLAGS=-g3 -ggdb -I /usr/local/psi4/include
-LDLIBS=-llapacke -L /usr/local/psi4/lib -lint -lderiv -lxc -lgg
+TESTCOMM=
+
+CXXFLAGS=-g3 -ggdb -I $(LAPACKDIR)/include
+LDFLAGS=-L $(LAPACKDIR)/lib 
+LDLIBS=-llapacke -llapack -lcblas -lblas -lgfortran
 EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC) eigenvalue_test$(EXEC) geometry_test$(EXEC)
 VGFLAGS=--leak-check=full --show-leak-kinds=all -v
 
@@ -11,16 +16,18 @@ all: test_test atom_test matrix_test eigenvalue_test geometry_test
 
 .PHONY: run_tests
 run_tests: $(EXECS)
-	valgrind $(VGFLAGS) --log-file="./logs/test_memcheck.log" ./test_test > ./logs/test_test.log
-	valgrind $(VGFLAGS) --log-file="./logs/atom_memcheck.log" ./atom_test > ./logs/atom_test.log
-	valgrind $(VGFLAGS) --log-file="./logs/matrix_memcheck.log" ./matrix_test > ./logs/matrix_test.log
-	valgrind $(VGFLAGS) --log-file="./logs/eigenvalue_memcheck.log" ./eigenvalue_test > ./logs/eigenvalue_test.log
-	valgrind $(VGFLAGS) --log-file="./logs/geometry_memcheck.log" ./geometry_test > ./logs/geometry_test.log
+	$(TESTCOMM) $(CURDIR)/test_test$(EXEC) > $(CURDIR)/logs/test_test.log
+	$(TESTCOMM) $(CURDIR)/atom_test$(EXEC) > $(CURDIR)/logs/atom_test.log
+	$(TESTCOMM) $(CURDIR)/matrix_test$(EXEC) > $(CURDIR)/logs/matrix_test.log
+	$(TESTCOMM) $(CURDIR)/eigenvalue_test$(EXEC) > $(CURDIR)/logs/eigenvalue_test.log
+	$(TESTCOMM) $(CURDIR)/geometry_test$(EXEC) > $(CURDIR)/logs/geometry_test.log
 	
 .PHONY: clean
 clean:
-	rm -f $(EXECS)
-	rm -rf ./logs/*.log
+	$(RM) $(EXECS)
+ifneq ($(wildcard $(CURDIR)/logs/*.log),)
+		$(RM) $(call escape,$(wildcard $(CURDIR)/logs/*.log))
+endif
 
 test_test: test_test.cpp test.hpp
 
