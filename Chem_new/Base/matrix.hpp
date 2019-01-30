@@ -19,10 +19,10 @@ class Matrix {
 public:
   //Constructors and destructor.
   Matrix(std::initializer_list<int> shape);
-  Matrix(const Matrix<_T> &copy);
+  explicit Matrix(const Matrix<_T> &copy);
 
   template<typename _U, typename _Alloc2 = std::allocator<_U> >
-  Matrix(const Matrix<_U, _Alloc2> &copy_and_cast);
+  explicit Matrix(const Matrix<_U, _Alloc2> &copy_and_cast);
   Matrix(_T *data, std::initializer_list<int> shape);
 
   virtual ~Matrix();
@@ -30,7 +30,7 @@ public:
 protected:
   //Data
   _T *data;
-  std::vector<int> shape;
+  int *shape;
   int dimensions;
   int size;
   _Alloc allocator;
@@ -40,10 +40,6 @@ public:
   virtual const _T &getEntry(std::initializer_list<int> index) const;
   virtual int getSize() const {
     return (this->size);
-  }
-  
-  virtual const std::vector<int> &getShape() const {
-    return (this->shape);
   }
 
   virtual int getShape(int ind) const {

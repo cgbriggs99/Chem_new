@@ -25,7 +25,7 @@ public:
 	}
 
 	~DefaultGeometryStrategy() {
-		;
+		delete eigenstrat;
 	}
 
 	compchem::Matrix<double> &findDistances(const compchem::AbstractMolecule &mol) override;

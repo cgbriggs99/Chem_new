@@ -36,7 +36,7 @@ public:
 		puts("Testing assert false...");
 		try {
 			assert(false);
-		} catch(test::AssertionFailedException *e) {
+		} catch(test::AssertionFailedException &e) {
 			this->incrementSuccess();
 			this->decrementFails();
 		}
@@ -46,7 +46,7 @@ public:
 		puts("Testing assert_print false...");
 		try {
 			assert_print(false);
-		} catch(test::AssertionFailedException *e) {
+		} catch(test::AssertionFailedException &e) {
 			this->incrementSuccess();
 			this->decrementFails();
 		}
