@@ -101,6 +101,9 @@ public:
 	}
 	virtual ~AbstractMolecule() = default;
 
+	/*
+	 * My body for the molecule class. Will become deprecated.
+	 */
 	virtual const std::vector<Atom> &getAtoms() const = 0;
 	virtual int getNumAtoms() const {
 		return (this->getAtoms().size());
@@ -133,7 +136,6 @@ public:
 
 	virtual void translateAtoms(const std::vector<double> &diff) = 0;
 	virtual void translateCOM(const std::vector<double> &diff) = 0;
-
 };
 }
 

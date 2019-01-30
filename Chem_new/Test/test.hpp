@@ -26,7 +26,7 @@ public:
 		this->fails = fails;
 	}
 
-	const char *what() {
+	const char *what() const noexcept override {
 		return (message.c_str());
 	}
 
@@ -77,7 +77,7 @@ public:
 		} else {
 			fails++;
 			printf("Failure: s %d f %d\n", successes, fails);
-			throw(new AssertionFailedException(successes, fails));
+			throw(AssertionFailedException(successes, fails));
 		}
 		return (cond);
 	}
@@ -93,7 +93,7 @@ public:
 			successes++;
 		} else {
 			fails++;
-			throw(new AssertionFailedException(successes, fails));
+			throw(AssertionFailedException(successes, fails));
 		}
 		return (cond);
 	}
@@ -106,7 +106,7 @@ public:
 		try {
 			assert(cond);
 			printf("Success: s %d f %d\n", successes, fails);
-		} catch(AssertionFailedException *e) {
+		} catch(AssertionFailedException &e) {
 			printf("Failure: s %d f %d\n", successes, fails);
 			throw(e);
 		}

@@ -26,6 +26,7 @@ public:
 		assert(hydrogen->getX() == 0);
 		assert(hydrogen->getY() == 0);
 		assert(hydrogen->getZ() == 0);
+		delete hydrogen;
 	}
 
 	void runTest() override {
