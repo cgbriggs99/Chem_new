@@ -215,7 +215,7 @@ int main(void) {
 	GeometryTest acetaldehyde("./acetaldehyde"), benzene("./benzene"), allene("./allene");
 
 	acetaldehyde.runTest();
-//	benzene.runTest();
-//	allene.runTest();
+	benzene.runTest();
+	allene.runTest();
 	return (0);
 }
