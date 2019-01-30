@@ -11,6 +11,7 @@
 #include <error.h>
 #include <errno.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #ifdef __WIN32
 #include <windows.h>
@@ -34,7 +35,10 @@ int link_dlls(int num_libs, const char **libs) {
 
 	for(int i = 0; i < num_libs; i++) {
 		if(is_linked[i] == 0) {
+#ifdef __WIN32
 			dll_handle_t handle = LoadLibrary(libs[i]);
+#else
+			dll_handle_t handle = dlopen(libs[i], RTLD_NOW);
 			if(handle != NULL) {
 				is_linked[i] = 1;
 				num_linked++;
@@ -66,7 +70,11 @@ int unlink_dlls(void) {
 		return (-1);
 	}
 	for(int i = 0; i < *num_handles; i++) {
+#ifdef __WIN32
 		FreeLibrary(handles[i]);
+#else
+		dlclose(handles[i]);
+#endif
 	}
 	free(handles);
 	free(num_handles);
