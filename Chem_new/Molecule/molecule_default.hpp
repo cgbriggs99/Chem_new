@@ -114,7 +114,7 @@ public:
 	}
 
 	void translateAtoms(const std::vector<double> &diff) override {
-		for(int i = 0; i < this->getNumAtoms(); i++) {
+		for(int i = 0; i < this->natom(); i++) {
 			this->atoms->at(i).setX(this->atoms->at(i).getX() + diff[0]);
 			this->atoms->at(i).setY(this->atoms->at(i).getY() + diff[1]);
 			this->atoms->at(i).setZ(this->atoms->at(i).getZ() + diff[2]);
@@ -122,11 +122,27 @@ public:
 	}
 
 	void translateCOM(const std::vector<double> &diff) override {
-		for(int i = 0; i < this->getNumAtoms(); i++) {
+		for(int i = 0; i < this->natom(); i++) {
 			this->atoms->at(i).setX(this->atoms->at(i).getX() - diff[0]);
 			this->atoms->at(i).setY(this->atoms->at(i).getY() - diff[1]);
 			this->atoms->at(i).setZ(this->atoms->at(i).getZ() - diff[2]);
 		}
+	}
+
+	double x(int i) const override {
+		return (this->atoms->at(i).getX());
+	}
+
+	double y(int i) const override {
+		return (this->atoms->at(i).getY());
+	}
+
+	double z(int i) const override {
+		return (this->atoms->at(i).getZ());
+	}
+
+	double mass(int i) const override {
+		return (this->atoms->at(i).getMass());
 	}
 };
 

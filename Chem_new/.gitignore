@@ -2,3 +2,5 @@ suffixes.mk
 .cproject
 .settings/language.settings.xml
 /core
+/.pydevproject
+/.project

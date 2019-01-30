@@ -5,6 +5,7 @@ include ../delete.mk
 
 TESTCOMM=
 
+
 CXXFLAGS=-g3 -ggdb -I $(LAPACKDIR)/include
 LDFLAGS=-L $(LAPACKDIR)/lib 
 LDLIBS=-llapacke -llapack -lcblas -lblas -lgfortran
