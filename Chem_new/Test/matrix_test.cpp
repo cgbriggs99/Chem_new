@@ -58,7 +58,7 @@ public:
 		}
 
 		for(int i = 0; i < 1000; i++) {
-			int index = (int) random();
+			int index = (int) rand();
 			if(index >= mat->getSize()) {
 				index %= mat->getSize();
 			}
