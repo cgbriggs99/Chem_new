@@ -25,7 +25,6 @@ compchem::Matrix<_T, _Alloc>::Matrix(std::initializer_list<int> shape) {
 
 template<typename _T, typename _Alloc>
 compchem::Matrix<_T, _Alloc>::Matrix(const Matrix<_T> &copy) {
-	puts("Copy constructor!");
 	this->dimensions = copy.dimensions;
 	this->size = copy.size;
 	this->shape = new int[this->dimensions];
@@ -41,7 +40,6 @@ compchem::Matrix<_T, _Alloc>::Matrix(const Matrix<_T> &copy) {
 template<typename _T, typename _Alloc>
 template<typename _U, typename _Alloc2>
 compchem::Matrix<_T, _Alloc>::Matrix(const Matrix<_U, _Alloc2> &copy) {
-	puts("Cast and copy constructor!");
 	this->dimensions = copy.dimensions;
 	this->shape = new int[this->dimensions];
 	for (int i = 0; i < this->dimensions; i++) {
