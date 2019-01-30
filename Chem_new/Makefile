@@ -1,7 +1,7 @@
 
 
 .PHONY: all
-all: molecule test base project1
+all: molecule base project1 test
 
 .PHONY: test
 test: 
