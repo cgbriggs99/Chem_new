@@ -44,7 +44,7 @@ public:
 	void testEigenvalues() {
 		compchem::Matrix<double> &evecs = strat.eigenvals(*mat);
 
-		double *hold = new double[evecs.getSize()];
+		double *hold = (double *) malloc(evecs.getSize() * sizeof(double));
 		for(int i = 0; i < evecs.getSize(); i++) {
 			hold[i] = evecs.getEntry({i});
 		}
@@ -52,7 +52,7 @@ public:
 		for(int i = 0; i < 5; i++) {
 			assert(compchem::compareDoubles(hold[i], values[i], 0.00001) == 0);
 		}
-
+		free(hold);
 		delete &evecs;
 	}
 

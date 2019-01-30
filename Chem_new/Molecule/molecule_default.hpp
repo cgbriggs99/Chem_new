@@ -15,7 +15,7 @@ namespace strategies {
 
 class DefaultMolecule : public AbstractMolecule {
 private:
-	std::vector<Atom> atoms;
+	std::vector<Atom> *atoms;
 
 	Matrix<double> *dists;
 	Matrix<double> *bonds;
@@ -35,17 +35,18 @@ public:
 		rotations = nullptr;
 		rotor = ASYMMETRIC;
 		principle = nullptr;
+		atoms = new std::vector<Atom>();
 	}
 
 	//Defined in molecule.cpp
 	~DefaultMolecule();
 
 	const std::vector<Atom> &getAtoms() const override {
-		return (this->atoms);
+		return (*(this->atoms));
 	}
 
 	void addAtom(Atom a) {
-		this->atoms.push_back(a);
+		this->atoms->push_back(a);
 	}
 
 	void setDistances(const Matrix<double> &dists) override {
@@ -114,17 +115,17 @@ public:
 
 	void translateAtoms(const std::vector<double> &diff) override {
 		for(int i = 0; i < this->getNumAtoms(); i++) {
-			this->atoms[i].setX(this->atoms[i].getX() + diff[0]);
-			this->atoms[i].setY(this->atoms[i].getY() + diff[1]);
-			this->atoms[i].setZ(this->atoms[i].getZ() + diff[2]);
+			this->atoms->at(i).setX(this->atoms->at(i).getX() + diff[0]);
+			this->atoms->at(i).setY(this->atoms->at(i).getY() + diff[1]);
+			this->atoms->at(i).setZ(this->atoms->at(i).getZ() + diff[2]);
 		}
 	}
 
 	void translateCOM(const std::vector<double> &diff) override {
 		for(int i = 0; i < this->getNumAtoms(); i++) {
-			this->atoms[i].setX(this->atoms[i].getX() - diff[0]);
-			this->atoms[i].setY(this->atoms[i].getY() - diff[1]);
-			this->atoms[i].setZ(this->atoms[i].getZ() - diff[2]);
+			this->atoms->at(i).setX(this->atoms->at(i).getX() - diff[0]);
+			this->atoms->at(i).setY(this->atoms->at(i).getY() - diff[1]);
+			this->atoms->at(i).setZ(this->atoms->at(i).getZ() - diff[2]);
 		}
 	}
 };

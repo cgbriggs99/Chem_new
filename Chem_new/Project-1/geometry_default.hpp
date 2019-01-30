@@ -28,7 +28,7 @@ public:
 	}
 
 	~DefaultGeometryStrategy() {
-		;
+		delete eigenstrat;
 	}
 
 	compchem::Matrix<double> &findDistances(const psi::Molecule &mol) override;

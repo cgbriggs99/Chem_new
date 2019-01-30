@@ -52,8 +52,8 @@ public:
 	}
 
 	void readGeomFile(const char *filename) {
-		int num;
-		FILE *fp = fopen(filename, "r+");
+		int num = 0;
+		FILE *fp = fopen(filename, "r");
 		int ignore = fscanf(fp, "%d", &num);
 
 
@@ -189,6 +189,7 @@ public:
 	void runTest() {
 		chdir(dir);
 		readGeomFile("input");
+
 		*dists = strat->findDistances(*molecule);
 		*bonds = strat->findBondAngles(*molecule);
 		*planes = strat->findPlaneAngles(*molecule, *bonds);
@@ -197,6 +198,7 @@ public:
 		molecule->move_to_com();
 		*moment = strat->findMoments(*molecule);
 		*principles = strat->findPrincipleMoments(*moment);
+
 
 		compareDistances("./distances");
 		compareBondAngles("./bond_angles");
@@ -211,7 +213,11 @@ public:
 };
 
 int main(void) {
-	chdir("./Test/data/geometry");
+	char buff[1000];
+	 getcwd(buff, 999);
+	 puts(buff);
+
+	chdir("./data/geometry");
 	GeometryTest acetaldehyde("./acetaldehyde"), benzene("./benzene"), allene("./allene");
 
 	acetaldehyde.runTest();
