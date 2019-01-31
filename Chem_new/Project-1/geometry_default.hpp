@@ -8,12 +8,9 @@
 #ifndef GEOMETRY_DEFAULT_HPP_
 #define GEOMETRY_DEFAULT_HPP_
 
-#include "/usr/local/psi4/include/psi4/pragma.h"
 #include "../Base/eigenvalues.hpp"
 #include "../Base/eigenvalues_default.hpp"
 #include "../Project-1/geometry.hpp"
-
-#include "/usr/local/psi4/include/psi4/libmints/molecule.h"
 
 namespace compchem {
 

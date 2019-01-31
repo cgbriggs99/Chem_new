@@ -8,8 +8,6 @@
 #include "../Project-1/geometry_default.hpp"
 
 #include "../Base/math.hpp"
-#include "/usr/local/psi4/include/psi4/pragma.h"
-#include "/usr/local/psi4/include/psi4/libmints/molecule.h"
 
 compchem::Matrix<double> &
 compchem::strategies::DefaultGeometryStrategy::findDistances(const compchem::AbstractMolecule &mol) {

@@ -39,6 +39,7 @@ int link_dlls(int num_libs, const char **libs) {
 			dll_handle_t handle = LoadLibrary(libs[i]);
 #else
 			dll_handle_t handle = dlopen(libs[i], RTLD_NOW);
+#endif
 			if(handle != NULL) {
 				is_linked[i] = 1;
 				num_linked++;

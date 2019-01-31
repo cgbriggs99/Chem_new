@@ -1,7 +1,8 @@
 include delete.mk
+include psicompile.mk
 
 .PHONY: all
-all: link_dlls molecule base project1 test
+all: link_dlls molecule base project1 test plugin
 
 .PHONY: test
 test: 
@@ -36,6 +37,14 @@ run_tests:
 .PHONY: link_dlls
 link_dlls:
 	$(MAKE) -C ./Windows all
+	
+.PHONY: plugin
+plugin:
+	cd ./Plugin
+	$(PSI) --plugin-name AOInts
+	$(PSI) --plugin-compile
+	$(MAKE) install
+	cd ../
 	
 .PHONY: clean
 clean:
