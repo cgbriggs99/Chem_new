@@ -25,17 +25,17 @@ public:
 	}
 
 	~DefaultGeometryStrategy() {
-		;
+		delete eigenstrat;
 	}
 
 	compchem::Matrix<double> &findDistances(const compchem::AbstractMolecule &mol) override;
 	compchem::Matrix<double> &findBondAngles(const compchem::AbstractMolecule &mol) override;
-	compchem::Matrix<double> &findPlaneAngles(const compchem::AbstractMolecule &mol) override;
-	compchem::Matrix<double> &findTorsionAngles(const compchem::AbstractMolecule &mol) override;
-	std::vector<double> &findPrincipleMoments(const compchem::AbstractMolecule &mol) override;
+	compchem::Matrix<double> &findPlaneAngles(const compchem::AbstractMolecule &mol, const compchem::Matrix<double> &bond_angles) override;
+	compchem::Matrix<double> &findTorsionAngles(const compchem::AbstractMolecule &mol, const compchem::Matrix<double> &bond_angles) override;
+	std::vector<double> &findPrincipleMoments(const compchem::Matrix<double> &moment) override;
 //	std::vector<double> &findRotationalConstants(const compchem::AbstractMolecule &mol) override;
 	std::vector<double> &findCenterOfMass(const compchem::AbstractMolecule &mol) override;
-	compchem::rotor_type findRotor(const compchem::AbstractMolecule &mol) override;
+	compchem::rotor_type findRotor(const std::vector<double> &principles) override;
 	compchem::Matrix<double> &findMoments(const compchem::AbstractMolecule &mol) override;
 
 };

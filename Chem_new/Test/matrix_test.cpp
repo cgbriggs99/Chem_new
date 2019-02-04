@@ -5,7 +5,7 @@
  *      Author: connor
  */
 
-#include "../Base/matrix.hpp"
+#include "../Base/matrix_default.hpp"
 #include "test.hpp"
 #include <time.h>
 #include <stdlib.h>
@@ -50,7 +50,7 @@ public:
 	void testStorageRecall() {
 		for(int i = 0; i < 100 * 100 * 100; i++) {
 			try {
-				mat->getEntry({i / 10000, (i % 10000) / 100, i % 100}) = i;
+				mat->setEntry(i, i / 10000, (i % 10000) / 100, i % 100);
 			} catch(std::out_of_range *e) {
 				puts(e->what());
 				exit(-1);
@@ -58,7 +58,7 @@ public:
 		}
 
 		for(int i = 0; i < 1000; i++) {
-			int index = (int) random();
+			int index = (int) rand();
 			if(index >= mat->getSize()) {
 				index %= mat->getSize();
 			}
