@@ -105,22 +105,22 @@ public:
 	 * My body for the molecule class. Will become deprecated.
 	 */
 	virtual const std::vector<Atom> &getAtoms() const = 0;
-	virtual int getNumAtoms() const {
+	virtual int natom() const {
 		return (this->getAtoms().size());
 	}
 	virtual void addAtom(Atom a) = 0;
 
-	virtual void setDistances(const Matrix<double> &dists) = 0;
-	virtual const Matrix<double> &getDistances() const = 0;
+	virtual void setDistances(const compchem::Matrix<double> &dists) = 0;
+	virtual const compchem::Matrix<double> &getDistances() const = 0;
 
-	virtual void setBondAngles(const Matrix<double> &angles) = 0;
-	virtual const Matrix<double> &getBondAngles() const = 0;
+	virtual void setBondAngles(const compchem::Matrix<double> &angles) = 0;
+	virtual const compchem::Matrix<double> &getBondAngles() const = 0;
 
-	virtual void setPlaneAngles(const Matrix<double> &angles) = 0;
-	virtual const Matrix<double> &getPlaneAngles() const = 0;
+	virtual void setPlaneAngles(const compchem::Matrix<double> &angles) = 0;
+	virtual const compchem::Matrix<double> &getPlaneAngles() const = 0;
 
-	virtual void setTorsionAngles(const Matrix<double> &angles) = 0;
-	virtual const Matrix<double> &getTorsionAngles() const = 0;
+	virtual void setTorsionAngles(const compchem::Matrix<double> &angles) = 0;
+	virtual const compchem::Matrix<double> &getTorsionAngles() const = 0;
 
 	virtual void setMoments(const compchem::Matrix<double> &moms) = 0;
 	virtual const compchem::Matrix<double> &getMoments() const = 0;
@@ -136,6 +136,11 @@ public:
 
 	virtual void translateAtoms(const std::vector<double> &diff) = 0;
 	virtual void translateCOM(const std::vector<double> &diff) = 0;
+
+	virtual double x(int i) const = 0;
+	virtual double y(int i) const = 0;
+	virtual double z(int i) const = 0;
+	virtual double mass(int i) const = 0;
 };
 }
 

@@ -1,9 +1,11 @@
+include ../delete.mk
+
 .PHONY:all
 all: molecule.o
 
 .PHONY: clean
 clean:
-	rm -rf *.o
+	$(RM) *.o
 
 molecule.o: molecule.cpp molecule.hpp molecule_default.hpp
 

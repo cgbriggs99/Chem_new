@@ -1,12 +1,17 @@
+include ../libs.mk
+include ../delete.mk
 
-LDFLAGS=-lm -llapack -lgfortran -llapacke -lblas -lcblas
+LDFLAGS=-L $(LAPACKDIR)/lib
+LDLIBS=-lm -llapack -lgfortran -llapacke -lblas -lcblas
+CXXFLAGS=-I $(LAPACKDIR)/include
+
 
 .PHONY:all
 all: math.o eigenvalues_default_double.o
 
 .PHONY: clean
 clean:
-	rm -rf *.o
+	$(RM) *.o
 
 math.o: ./math.hpp
 

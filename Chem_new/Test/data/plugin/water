@@ -1,0 +1,16 @@
+molecule h2o {
+  o
+  h 1 1.0
+  h 1 1.0 2 103.1
+}
+
+
+
+set {
+  basis sto-3g
+}
+
+wfn = Wavefunction(h2o, BasisSet.build(h2o))
+mints = MintsHelper(wfn.basisset())
+
+Li = mints.so_angular_momentum()
