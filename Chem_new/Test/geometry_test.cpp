@@ -217,10 +217,10 @@ public:
 
 		compareDistances("./distances");
 		compareBondAngles("./bond_angles");
-		compareCOM("./center_of_mass", *com);
-		compareMoments("./moment_of_inertia");
 		comparePlaneAngles("./plane_angles");
 		compareTorsionAngles("./torsion_angles");
+		compareCOM("./center_of_mass", *com);
+		compareMoments("./moment_of_inertia");
 		comparePrincipleMoments("./principle_moments");
 
 		chdir("..");
@@ -228,9 +228,9 @@ public:
 };
 
 int main(void) {
-	char buff[1000];
-	getcwd(buff, 999);
-	puts(buff);
+//	char buff[1000];
+//	getcwd(buff, 999);
+//	puts(buff);
 
 	if(chdir("./data/geometry") == -1) {
 		chdir("./Test/data/geometry");

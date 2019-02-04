@@ -40,7 +40,7 @@ namespace psi{ namespace solutions {
 extern "C" PSI_API
 int read_options(std::string name, Options& options)
 {
-    if (name == "@PLUGIN@"|| options.read_globals()) {
+    if (name == "solutions"|| options.read_globals()) {
         /*- The amount of information printed to the output file -*/
         options.add_int("PRINT", 1);
     }
@@ -49,11 +49,11 @@ int read_options(std::string name, Options& options)
 }
 
 extern "C" PSI_API
-SharedWavefunction @plugin@(SharedWavefunction ref_wfn, Options& options)
+SharedWavefunction solutions(SharedWavefunction ref_wfn, Options& options)
 {
     int print = options.get_int("PRINT");
 
-
+    //ref_wfn.get()->S();
 
     // Typically you would build a new wavefunction and populate it with data
     return ref_wfn;

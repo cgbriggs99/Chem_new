@@ -1,6 +1,7 @@
-suffixes.mk
+/suffixes.mk
 .cproject
 .settings/language.settings.xml
 /core
 /.pydevproject
 /.project
+/psicompile.mk
