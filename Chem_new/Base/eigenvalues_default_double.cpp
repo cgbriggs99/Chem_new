@@ -14,7 +14,7 @@
 
 template<>
 compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigenvals(
-		const compchem::Matrix<double> &mat) {
+		const compchem::AbstractMatrix<double> &mat) {
 	double *work = (double *) malloc((size_t) (mat.getSize() * sizeof(double)));
 	double *out = (double *) malloc(mat.getShape(0) * sizeof(double));
 	double *temp = (double *) malloc(mat.getShape(0) * sizeof(double));
@@ -41,7 +41,7 @@ compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigen
 
 template<>
 compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigenvecs_left(
-		const compchem::Matrix<double> &mat) {
+		const compchem::AbstractMatrix<double> &mat) {
 	double *work = (double *) malloc((size_t) (mat.getSize() * sizeof(double)));
 	double *temp1 = new double[mat.getShape(0)];
 	double *temp2 = new double[mat.getShape(0)];
@@ -65,7 +65,7 @@ compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigen
 
 template<>
 compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigenvecs_right(
-		const compchem::Matrix<double> &mat) {
+		const compchem::AbstractMatrix<double> &mat) {
 	double *work = (double *) malloc((size_t) (mat.getSize() * sizeof(double)));
 	double *temp1 = new double[mat.getShape(0)];
 	double *temp2 = new double[mat.getShape(0)];
@@ -89,7 +89,7 @@ compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigen
 
 template<>
 void compchem::strategies::LapackEigenvalues<double>::eigen_all(
-		const compchem::Matrix<double> &mat, compchem::Matrix<double> *&evals,
+		const compchem::AbstractMatrix<double> &mat, compchem::Matrix<double> *&evals,
 		compchem::Matrix<double> *&rvecs, compchem::Matrix<double> *&lvecs) {
 	double *work = (double *) malloc((size_t) (mat.getSize() * sizeof(double)));
 

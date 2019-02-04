@@ -54,6 +54,11 @@ public:
 	int getDimension() const override {
 		return (this->dimensions);
 	}
+
+	//Sorts low to high.
+	void sort();
+	//Sorts high to low.
+	void rsort();
 };
 }
 

@@ -110,30 +110,6 @@ public:
 	}
 	virtual void addAtom(Atom a) = 0;
 
-	virtual void setDistances(const compchem::AbstractMatrix<double> &dists) = 0;
-	virtual const compchem::AbstractMatrix<double> &getDistances() const = 0;
-
-	virtual void setBondAngles(const compchem::AbstractMatrix<double> &angles) = 0;
-	virtual const compchem::AbstractMatrix<double> &getBondAngles() const = 0;
-
-	virtual void setPlaneAngles(const compchem::AbstractMatrix<double> &angles) = 0;
-	virtual const compchem::AbstractMatrix<double> &getPlaneAngles() const = 0;
-
-	virtual void setTorsionAngles(const compchem::AbstractMatrix<double> &angles) = 0;
-	virtual const compchem::AbstractMatrix<double> &getTorsionAngles() const = 0;
-
-	virtual void setMoments(const compchem::AbstractMatrix<double> &moms) = 0;
-	virtual const compchem::AbstractMatrix<double> &getMoments() const = 0;
-
-	virtual void setPrincipleMoments(const std::vector<double> &moms) = 0;
-	virtual const std::vector<double> &getPrincipleMoments() const = 0;
-
-	virtual void setRotationalConstants(const std::vector<double> &rots) = 0;
-	virtual const std::vector<double> &getRotationalConstants() const = 0;
-
-	virtual void setRotorType(rotor_type rot) = 0;
-	virtual rotor_type getRotorType() const = 0;
-
 	virtual void translateAtoms(const std::vector<double> &diff) = 0;
 	virtual void translateCOM(const std::vector<double> &diff) = 0;
 

@@ -27,10 +27,10 @@ public:
 		;
 	}
 
-	Matrix<T> &eigenvals(const Matrix<T> &mat) override;
-	Matrix<T> &eigenvecs_left(const Matrix<T> &mat) override;
-	Matrix<T> &eigenvecs_right(const Matrix<T> &mat) override;
-	void eigen_all(const Matrix<T> &mat, Matrix<T> *&evals, Matrix<T> *&rvecs, Matrix<T> *&lvecs) override;
+	Matrix<T> &eigenvals(const AbstractMatrix<T> &mat) override;
+	Matrix<T> &eigenvecs_left(const AbstractMatrix<T> &mat) override;
+	Matrix<T> &eigenvecs_right(const AbstractMatrix<T> &mat) override;
+	void eigen_all(const AbstractMatrix<T> &mat, Matrix<T> *&evals, Matrix<T> *&rvecs, Matrix<T> *&lvecs) override;
 };
 
 
@@ -57,16 +57,16 @@ public:
 //}
 
 template<>
-Matrix<double> &LapackEigenvalues<double>::eigenvals(const Matrix<double> &mat);
+Matrix<double> &LapackEigenvalues<double>::eigenvals(const AbstractMatrix<double> &mat);
 
 template<>
-Matrix<double> &LapackEigenvalues<double>::eigenvecs_left(const Matrix<double> &mat);
+Matrix<double> &LapackEigenvalues<double>::eigenvecs_left(const AbstractMatrix<double> &mat);
 
 template<>
-Matrix<double> &LapackEigenvalues<double>::eigenvecs_right(const Matrix<double> &mat);
+Matrix<double> &LapackEigenvalues<double>::eigenvecs_right(const AbstractMatrix<double> &mat);
 
 template<>
-void LapackEigenvalues<double>::eigen_all(const Matrix<double> &mat,
+void LapackEigenvalues<double>::eigen_all(const AbstractMatrix<double> &mat,
 		Matrix<double> *&evals, Matrix<double> *&rvecs, Matrix<double> *&lvecs);
 
 }
