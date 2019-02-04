@@ -11,47 +11,29 @@
 #include <memory>
 #include <initializer_list>
 #include <vector>
+#include <stdarg.h>
 
 namespace compchem {
 
-template<typename _T, typename _Alloc = std::allocator<_T> >
-class Matrix {
+template<typename T, typename _Alloc = std::allocator<T> >
+class AbstractMatrix {
 public:
-  //Constructors and destructor.
-  Matrix(std::initializer_list<int> shape);
-  explicit Matrix(const Matrix<_T> &copy);
+	AbstractMatrix() {
+		;
+	}
+	virtual ~AbstractMatrix() = default;
 
-  template<typename _U, typename _Alloc2 = std::allocator<_U> >
-  explicit Matrix(const Matrix<_U, _Alloc2> &copy_and_cast);
-  Matrix(_T *data, std::initializer_list<int> shape);
-
-  virtual ~Matrix();
-
-protected:
-  //Data
-  _T *data;
-  int *shape;
-  int dimensions;
-  int size;
-  _Alloc allocator;
-public:
-  //Getters and setters.
-  virtual _T &getEntry(std::initializer_list<int> index);
-  virtual const _T &getEntry(std::initializer_list<int> index) const;
-  virtual int getSize() const {
-    return (this->size);
-  }
-
-  virtual int getShape(int ind) const {
-	  return (this->shape[ind]);
-  }
-
-  virtual int getDimension() const {
-    return (this->dimensions);
-  }
+	virtual const T &getEntry(int index, ...) const = 0;
+	virtual const T &getEntry(std::vector<int> index) const = 0;
+	virtual void setEntry(T &ent, int index, ...) = 0;
+	virtual void setEntry(T &ent, std::vector<int> index) = 0;
+	virtual void setEntry(T &&ent, int index, ...) = 0;
+	virtual void setEntry(T &&ent, std::vector<int> index) = 0;
+	virtual int getSize() const = 0;
+	virtual int getShape(int dim) const = 0;
+	virtual int getDimension() const = 0;
 };
-}
 
-#include "matrix.cpp"
+}
 
 #endif

@@ -1,1 +1,1 @@
-escape=$(subst /,\,$(1))
+escape=$(1)#$(subst /,\,$(1))

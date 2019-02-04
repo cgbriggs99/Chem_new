@@ -110,20 +110,20 @@ public:
 	}
 	virtual void addAtom(Atom a) = 0;
 
-	virtual void setDistances(const compchem::Matrix<double> &dists) = 0;
-	virtual const compchem::Matrix<double> &getDistances() const = 0;
+	virtual void setDistances(const compchem::AbstractMatrix<double> &dists) = 0;
+	virtual const compchem::AbstractMatrix<double> &getDistances() const = 0;
 
-	virtual void setBondAngles(const compchem::Matrix<double> &angles) = 0;
-	virtual const compchem::Matrix<double> &getBondAngles() const = 0;
+	virtual void setBondAngles(const compchem::AbstractMatrix<double> &angles) = 0;
+	virtual const compchem::AbstractMatrix<double> &getBondAngles() const = 0;
 
-	virtual void setPlaneAngles(const compchem::Matrix<double> &angles) = 0;
-	virtual const compchem::Matrix<double> &getPlaneAngles() const = 0;
+	virtual void setPlaneAngles(const compchem::AbstractMatrix<double> &angles) = 0;
+	virtual const compchem::AbstractMatrix<double> &getPlaneAngles() const = 0;
 
-	virtual void setTorsionAngles(const compchem::Matrix<double> &angles) = 0;
-	virtual const compchem::Matrix<double> &getTorsionAngles() const = 0;
+	virtual void setTorsionAngles(const compchem::AbstractMatrix<double> &angles) = 0;
+	virtual const compchem::AbstractMatrix<double> &getTorsionAngles() const = 0;
 
-	virtual void setMoments(const compchem::Matrix<double> &moms) = 0;
-	virtual const compchem::Matrix<double> &getMoments() const = 0;
+	virtual void setMoments(const compchem::AbstractMatrix<double> &moms) = 0;
+	virtual const compchem::AbstractMatrix<double> &getMoments() const = 0;
 
 	virtual void setPrincipleMoments(const std::vector<double> &moms) = 0;
 	virtual const std::vector<double> &getPrincipleMoments() const = 0;

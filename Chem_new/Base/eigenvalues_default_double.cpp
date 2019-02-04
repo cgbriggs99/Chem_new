@@ -6,7 +6,7 @@
  */
 
 #include "eigenvalues_default.hpp"
-#include "../Base/matrix.hpp"
+#include "../Base/matrix_default.hpp"
 
 #include <stdlib.h>
 #include <exception>
@@ -27,15 +27,16 @@ compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigen
 			mat.getShape(1), out, temp, nullptr, mat.getShape(0), nullptr,
 			mat.getShape(1));
 	free(work);
-	Matrix<double> &retval = *new Matrix<double>(out, { mat.getShape(0) });
-	free(out);
 	free(temp);
 
 	if (info != 0) {
 		printf("Error %d\n", info);
 		throw(new std::runtime_error("Lapacke error!"));
 	}
-	return (retval);
+
+	Matrix<double> *retval = new Matrix<double>(out, { mat.getShape(0) });
+	free(out);
+	return (*retval);
 }
 
 template<>

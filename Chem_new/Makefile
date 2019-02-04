@@ -2,7 +2,7 @@ include delete.mk
 include psicompile.mk
 
 .PHONY: all
-all: link_dlls molecule base project1 test plugin
+all: link_dlls molecule base project1 test #plugin
 
 .PHONY: test
 test: 
