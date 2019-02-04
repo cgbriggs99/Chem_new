@@ -82,6 +82,7 @@ public:
 			fscanf(fp, "%d %lf", &n, &val);
 			assert(compchem::compareDoubles(eigs.getEntry(n), val, 0.01) == 0);
 		}
+		fclose(fp);
 	}
 
 	void runTest() {
