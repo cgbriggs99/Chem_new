@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include <initializer_list>
+#include <stdlib.h>
 
 template<typename _T, typename _Alloc>
 compchem::Matrix<_T, _Alloc>::Matrix(std::initializer_list<int> shape) {
@@ -233,6 +234,38 @@ void compchem::Matrix<_T, _Alloc>::setEntry(_T &&ent,
 		prod *= this->shape[i];
 	}
 	this->data[offset] = ent;
+}
+
+template<typename _T>
+static int compare(const void *a, const void *b) {
+	if(*(_T *) a > *(_T *) b) {
+		return (1);
+	} else if(*(_T *) a < *(_T *) b) {
+		return (-1);
+	} else {
+		return (0);
+	}
+}
+
+template<typename _T>
+static int rcompare(const void *a, const void *b) {
+	if(*(_T *) a > *(_T *) b) {
+		return (-1);
+	} else if(*(_T *) a < *(_T *) b) {
+		return (1);
+	} else {
+		return (0);
+	}
+}
+
+template<typename _T, typename _Alloc>
+void compchem::Matrix<_T, _Alloc>::sort() {
+	qsort(this->data, this->size, sizeof(_T), compare<_T>);
+}
+
+template<typename _T, typename _Alloc>
+void compchem::Matrix<_T, _Alloc>::rsort() {
+	qsort(this->data, this->size, sizeof(_T), rcompare<_T>);
 }
 
 #endif

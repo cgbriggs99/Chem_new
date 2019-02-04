@@ -34,30 +34,6 @@ double compchem::amu(int z) {
 }
 
 compchem::strategies::DefaultMolecule::~DefaultMolecule()  {
-	if(dists != nullptr) {
-		delete dists;
-	}
-	if(bonds != nullptr) {
-		delete bonds;
-	}
-	if(plane_angles != nullptr) {
-		delete plane_angles;
-	}
-	if(torsion != nullptr) {
-		delete torsion;
-	}
-
-	if(moments != nullptr) {
-		delete moments;
-	}
-
-	if(rotations != nullptr) {
-		delete rotations;
-	}
-
-	if(principle != nullptr) {
-		delete principle;
-	}
 	delete atoms;
 }
 

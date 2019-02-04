@@ -17,25 +17,8 @@ namespace strategies {
 class DefaultMolecule : public AbstractMolecule {
 private:
 	std::vector<Atom> *atoms;
-
-	Matrix<double> *dists;
-	Matrix<double> *bonds;
-	Matrix<double> *plane_angles;
-	Matrix<double> *torsion;
-	Matrix<double> *moments;
-	std::vector<double> *principle;
-	std::vector<double> *rotations;
-	rotor_type rotor;
 public:
 	DefaultMolecule() {
-		dists = nullptr;
-		bonds = nullptr;
-		plane_angles = nullptr;
-		torsion = nullptr;
-		moments = nullptr;
-		rotations = nullptr;
-		rotor = ASYMMETRIC;
-		principle = nullptr;
 		atoms = new std::vector<Atom>();
 	}
 
@@ -48,70 +31,6 @@ public:
 
 	void addAtom(Atom a) {
 		this->atoms->push_back(a);
-	}
-
-	void setDistances(const AbstractMatrix<double> &dists) override {
-		this->dists = new Matrix<double>(dists);
-	}
-
-	const AbstractMatrix<double> &getDistances() const override {
-		return (*(this->dists));
-	}
-
-	void setBondAngles(const AbstractMatrix<double> &angles) override {
-		this->bonds = new Matrix<double>(angles);
-	}
-
-	const AbstractMatrix<double> &getBondAngles() const override {
-		return (*bonds);
-	}
-
-	void setPlaneAngles(const AbstractMatrix<double> &angles) override {
-		this->plane_angles = new Matrix<double>(angles);
-	}
-
-	const AbstractMatrix<double> &getPlaneAngles() const override {
-		return (*(this->plane_angles));
-	}
-
-	void setTorsionAngles(const AbstractMatrix<double> &angles) override {
-		this->torsion = new Matrix<double>(angles);
-	}
-
-	const AbstractMatrix<double> &getTorsionAngles() const override {
-		return (*(this->torsion));
-	}
-
-	void setMoments(const compchem::AbstractMatrix<double> &moms) override {
-		this->moments = new compchem::Matrix<double>(moms);
-	}
-
-	const compchem::AbstractMatrix<double> &getMoments() const override {
-		return (*(this->moments));
-	}
-
-	void setRotationalConstants(const std::vector<double> &rots) override {
-		this->rotations = new std::vector<double>(rots);
-	}
-
-	const std::vector<double> &getRotationalConstants() const override {
-		return (*(this->rotations));
-	}
-
-	void setRotorType(rotor_type rot) override {
-		this->rotor = rot;
-	}
-
-	rotor_type getRotorType() const override {
-		return (this->rotor);
-	}
-
-	void setPrincipleMoments(const std::vector<double> &moms) override {
-		this->principle = new std::vector<double>(moms);
-	}
-
-	const std::vector<double> &getPrincipleMoments() const override {
-		return (*(this->principle));
 	}
 
 	void translateAtoms(const std::vector<double> &diff) override {

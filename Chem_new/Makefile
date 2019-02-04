@@ -10,6 +10,12 @@ test:
 	$(MAKE) -C ./Test all
 	$(info Finished making the tests)
 	
+.PHONY: rebuild_test
+rebuild_test: 
+	$(info Making the tests)
+	$(MAKE) -B -C ./Test all
+	$(info Finished making the tests)
+	
 .PHONY: molecule
 molecule:
 	$(info Making molecule things)
