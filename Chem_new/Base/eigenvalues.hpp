@@ -8,7 +8,7 @@
 #ifndef BASE_EIGENVALUES_HPP_
 #define BASE_EIGENVALUES_HPP_
 
-#include "matrix.hpp"
+#include "matrix_default.hpp"
 
 namespace compchem {
 

@@ -235,11 +235,11 @@ int main(void) {
 	if(chdir("./data/geometry") == -1) {
 		chdir("./Test/data/geometry");
 	}
-	GeometryTest acetaldehyde("./acetaldehyde"), benzene("./benzene"), allene(
-			"./allene");
+	GeometryTest acetaldehyde("./acetaldehyde");//, benzene("./benzene"), allene(
+			//"./allene");
 
 	acetaldehyde.runTest();
-	benzene.runTest();
-	allene.runTest();
+//	benzene.runTest();
+//	allene.runTest();
 	return (0);
 }

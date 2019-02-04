@@ -9,6 +9,7 @@
 #define MOLECULE_DEFAULT_HPP_
 
 #include "molecule.hpp"
+#include "../Base/matrix_default.hpp"
 
 namespace compchem {
 namespace strategies {
@@ -49,43 +50,43 @@ public:
 		this->atoms->push_back(a);
 	}
 
-	void setDistances(const Matrix<double> &dists) override {
+	void setDistances(const AbstractMatrix<double> &dists) override {
 		this->dists = new Matrix<double>(dists);
 	}
 
-	const Matrix<double> &getDistances() const override {
+	const AbstractMatrix<double> &getDistances() const override {
 		return (*(this->dists));
 	}
 
-	void setBondAngles(const Matrix<double> &angles) override {
+	void setBondAngles(const AbstractMatrix<double> &angles) override {
 		this->bonds = new Matrix<double>(angles);
 	}
 
-	const Matrix<double> &getBondAngles() const override {
+	const AbstractMatrix<double> &getBondAngles() const override {
 		return (*bonds);
 	}
 
-	void setPlaneAngles(const Matrix<double> &angles) override {
+	void setPlaneAngles(const AbstractMatrix<double> &angles) override {
 		this->plane_angles = new Matrix<double>(angles);
 	}
 
-	const Matrix<double> &getPlaneAngles() const override {
+	const AbstractMatrix<double> &getPlaneAngles() const override {
 		return (*(this->plane_angles));
 	}
 
-	void setTorsionAngles(const Matrix<double> &angles) override {
+	void setTorsionAngles(const AbstractMatrix<double> &angles) override {
 		this->torsion = new Matrix<double>(angles);
 	}
 
-	const Matrix<double> &getTorsionAngles() const override {
+	const AbstractMatrix<double> &getTorsionAngles() const override {
 		return (*(this->torsion));
 	}
 
-	void setMoments(const compchem::Matrix<double> &moms) override {
+	void setMoments(const compchem::AbstractMatrix<double> &moms) override {
 		this->moments = new compchem::Matrix<double>(moms);
 	}
 
-	const compchem::Matrix<double> &getMoments() const override {
+	const compchem::AbstractMatrix<double> &getMoments() const override {
 		return (*(this->moments));
 	}
 

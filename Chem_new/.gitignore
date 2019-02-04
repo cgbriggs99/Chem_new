@@ -5,3 +5,4 @@
 /.pydevproject
 /.project
 /psicompile.mk
+/delete.mk

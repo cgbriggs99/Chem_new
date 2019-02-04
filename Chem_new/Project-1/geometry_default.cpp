@@ -8,6 +8,8 @@
 #include "../Project-1/geometry_default.hpp"
 
 #include "../Base/math.hpp"
+#include "../Base/matrix.hpp"
+#include "../Base/matrix_default.hpp"
 
 compchem::Matrix<double> &
 compchem::strategies::DefaultGeometryStrategy::findDistances(const compchem::AbstractMolecule &mol) {
@@ -15,13 +17,14 @@ compchem::strategies::DefaultGeometryStrategy::findDistances(const compchem::Abs
 			new compchem::Matrix<double>({mol.natom(), mol.natom()});
 
 	for(int i = 0; i < mol.natom(); i++) {
-		out->getEntry({i, i}) = 0;
+		out->setEntry(0, i, i);
 		for(int j = 0; j < i; j++) {
 			double dx = mol.x(i) - mol.x(j);
 			double dy = mol.y(i) - mol.y(j);
 			double dz = mol.z(i) - mol.z(j);
-			out->getEntry({i, j}) = hypot3(dx, dy, dz);
-			out->getEntry({j, i}) = out->getEntry({i, j});
+			double dist = hypot3(dx, dy, dz);
+			out->setEntry(dist, i, j);
+			out->setEntry(dist, j, i);
 		}
 	}
 	return (*out);
@@ -36,7 +39,7 @@ compchem::strategies::DefaultGeometryStrategy::findBondAngles(const compchem::Ab
 		for(int j = 0; j < mol.natom(); j++) {
 			for(int k = 0; k < mol.natom(); k++) {
 				if(i == j || i == k || j == k) {
-					out->getEntry({i, j, k}) = 0;
+					out->setEntry(0, i, j, k);
 					continue;
 				}
 				double vji[] = {mol.x(j) - mol.x(i),
@@ -49,7 +52,7 @@ compchem::strategies::DefaultGeometryStrategy::findBondAngles(const compchem::Ab
 				};
 				double rij = hypot3(vji[0], vji[1], vji[2]), rjk = hypot3(vjk[0], vjk[1], vjk[2]);
 				double dot = vji[0] * vjk[0] + vji[1] * vjk[1] + vji[2] * vjk[2];
-				out->getEntry({i, j, k}) = acos(dot / (rij * rjk));
+				out->setEntry(acos(dot / (rij * rjk)), i, j, k);
 			}
 		}
 	}
@@ -66,7 +69,7 @@ compchem::strategies::DefaultGeometryStrategy::findPlaneAngles(const compchem::A
 			for(int k = 0; k < mol.natom(); k++) {
 				for(int l = 0; l < mol.natom(); l++) {
 					if(i == j || i == k || i == l || j == k || j == l || k == l) {
-						out->getEntry({i, j, k, l}) = 0;
+						out->setEntry(0, i, j, k, l);
 						continue;
 					}
 					double vkj[] = {mol.x(k) - mol.x(j),
@@ -90,11 +93,11 @@ compchem::strategies::DefaultGeometryStrategy::findPlaneAngles(const compchem::A
 							vki[1] * (vkl[2] * vkj[0] - vkl[0] * vkj[2]) +
 							vki[2] * (vkl[0] * vkj[1] - vkl[1] * vkj[0])) / (rkj * rki * rkl * sin(angle));
 					if(hold >= 1) {
-						out->getEntry({i, j, k, l}) = M_PI_2;
+						out->setEntry(M_PI_2, i, j, k, l);
 					} else if(hold <= -1) {
-						out->getEntry({i, j, k, l}) = -M_PI_2;
+						out->setEntry(-M_PI_2, i, j, k, l);
 					} else {
-						out->getEntry({i, j, k, l}) = asin(hold);
+						out->setEntry(asin(hold), i, j, k, l);
 					}
 				}
 			}
@@ -114,7 +117,7 @@ compchem::strategies::DefaultGeometryStrategy::findTorsionAngles(const compchem:
 			for(int k = 0; k < mol.natom(); k++) {
 				for(int l = 0; l < mol.natom(); l++) {
 					if(i == j || i == k || i == l || j == k || j == l || k == l) {
-						out->getEntry({i, j, k, l}) = 0;
+						out->setEntry(0, i, j, k, l);
 						continue;
 					}
 					double vij[] = {mol.x(i) - mol.x(j),
@@ -140,11 +143,11 @@ compchem::strategies::DefaultGeometryStrategy::findTorsionAngles(const compchem:
 							(vij[0] * vjk[1] - vij[1] * vjk[0]) * (vjk[0] * vkl[1] - vjk[1] * vkl[0])) /
 							(rij * rjk * rjk * rkl * sin(angle1) * sin(angle2));
 					if(hold >= 1) {
-						out->getEntry({i, j, k, l}) = 0;
+						out->setEntry(0, i, j, k, l);
 					} else if(hold <= -1) {
-						out->getEntry({i, j, k, l}) = M_PI;
+						out->setEntry(M_PI, i, j, k, l);
 					} else {
-						out->getEntry({i, j, k, l}) = acos(hold);
+						out->setEntry(acos(hold), i, j, k, l);
 					}
 				}
 			}
@@ -174,26 +177,26 @@ compchem::strategies::DefaultGeometryStrategy::findCenterOfMass(const compchem::
 compchem::Matrix<double> &compchem::strategies::DefaultGeometryStrategy::findMoments(
 		const compchem::AbstractMolecule &mol) {
 	Matrix<double> *moments = new Matrix<double>({3, 3});
-	moments->getEntry({0, 0}) = 0;
-	moments->getEntry({1, 0}) = 0;
-	moments->getEntry({2, 0}) = 0;
-	moments->getEntry({0, 1}) = 0;
-	moments->getEntry({1, 1}) = 0;
-	moments->getEntry({2, 1}) = 0;
-	moments->getEntry({0, 2}) = 0;
-	moments->getEntry({1, 2}) = 0;
-	moments->getEntry({2, 2}) = 0;
+	moments->setEntry(0, 0, 0);
+	moments->setEntry(0, 1, 0);
+	moments->setEntry(0, 2, 0);
+	moments->setEntry(0, 0, 1);
+	moments->setEntry(0, 1, 1);
+	moments->setEntry(0, 2, 1);
+	moments->setEntry(0, 0, 2);
+	moments->setEntry(0, 1, 2);
+	moments->setEntry(0, 2, 2);
 	for(int i = 0; i < mol.natom(); i++) {
 		double x = mol.x(i), y = mol.y(i), z = mol.z(i), mass = mol.mass(i);
-		moments->getEntry({0, 0}) += mass * (y * y + z * z);
-		moments->getEntry({1, 0}) += mass * x * y;
-		moments->getEntry({2, 0}) += mass * x * z;
-		moments->getEntry({0, 1}) += mass * x * y;
-		moments->getEntry({1, 1}) += mass * (x * x + z * z);
-		moments->getEntry({2, 1}) += mass * y * z;
-		moments->getEntry({0, 2}) += mass * x * z;
-		moments->getEntry({1, 2}) += mass * y * z;
-		moments->getEntry({2, 2}) += mass * (x * x + y * y);
+		moments->setEntry(moments->getEntry(0, 0) + mass * (y * y + z * z), 0, 0);
+		moments->setEntry(moments->getEntry(1, 0) + mass * x * y, 1, 0);
+		moments->setEntry(moments->getEntry(2, 0) + mass * x * z, 2, 0);
+		moments->setEntry(moments->getEntry(0, 1) + mass * x * y, 0, 1);
+		moments->setEntry(moments->getEntry(1, 1) + mass * (x * x + z * z), 1, 1);
+		moments->setEntry(moments->getEntry(2, 1) + mass * y * z, 2, 1);
+		moments->setEntry(moments->getEntry(0, 2) + mass * x * z, 0, 2);
+		moments->setEntry(moments->getEntry(1, 2) + mass * y * z, 1, 2);
+		moments->setEntry(moments->getEntry(2, 2) + mass * (x * x + y * y), 2, 2);
 	}
 	return (*moments);
 }
