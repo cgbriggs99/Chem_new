@@ -39,15 +39,16 @@ compchem::strategies::DefaultGeometryStrategy::findBondAngles(const compchem::Ab
 					out->getEntry({i, j, k}) = 0;
 					continue;
 				}
-				std::vector<double> vji = {mol.x(j) - mol.x(i),
-				                           mol.y(j) - mol.y(i),
-				                           mol.z(j) - mol.z(i)
-				}, vjk = {mol.x(j) - mol.x(k),
+				double vji[] = {mol.x(j) - mol.x(i),
+						mol.y(j) - mol.y(i),
+						mol.z(j) - mol.z(i)
+				};
+				double vjk[] = {mol.x(j) - mol.x(k),
 				          mol.y(j) - mol.y(k),
 				          mol.z(j) - mol.z(k)
 				};
 				double rij = hypot3(vji[0], vji[1], vji[2]), rjk = hypot3(vjk[0], vjk[1], vjk[2]);
-				double dot = dotprod(vji, vjk);
+				double dot = vji[0] * vjk[0] + vji[1] * vjk[1] + vji[2] * vjk[2];
 				out->getEntry({i, j, k}) = acos(dot / (rij * rjk));
 			}
 		}
@@ -68,15 +69,15 @@ compchem::strategies::DefaultGeometryStrategy::findPlaneAngles(const compchem::A
 						out->getEntry({i, j, k, l}) = 0;
 						continue;
 					}
-					std::vector<double> vkj = {mol.x(k) - mol.x(j),
+					double vkj[] = {mol.x(k) - mol.x(j),
 					                           mol.y(k) - mol.y(j),
 					                           mol.z(k) - mol.z(j)
 					};
-					std::vector<double> vki = {mol.x(k) - mol.x(i),
+					double vki[] = {mol.x(k) - mol.x(i),
 					                           mol.y(k) - mol.y(i),
 					                           mol.z(k) - mol.z(i)
 					};
-					std::vector<double> vkl = {mol.x(k) - mol.x(l),
+					double vkl[] = {mol.x(k) - mol.x(l),
 					                           mol.y(k) - mol.y(l),
 					                           mol.z(k) - mol.z(l)
 					};
@@ -84,11 +85,10 @@ compchem::strategies::DefaultGeometryStrategy::findPlaneAngles(const compchem::A
 					double rki = hypot3(vki[0], vki[1], vki[2]);
 					double rkl = hypot3(vkl[0], vkl[1], vkl[2]);
 
-					std::vector<double> ekj = {vkj[0] / rkj, vkj[1] / rkj, vkj[2] / rkj};
-					std::vector<double> eki = {vki[0] / rki, vki[1] / rki, vki[2] / rki};
-					std::vector<double> ekl = {vkl[0] / rkl, vkl[1] / rkl, vkl[2] / rkl};
 					double angle = bond_angles.getEntry({j, k, l});
-					double hold = (dotprod(crossprod(ekl, ekj), eki)) / (sin(angle));
+					double hold = (vki[0] * (vkl[1] * vkj[2] - vkl[2] * vkj[1]) +
+							vki[1] * (vkl[2] * vkj[0] - vkl[0] * vkj[2]) +
+							vki[2] * (vkl[0] * vkj[1] - vkl[1] * vkj[0])) / (rkj * rki * rkl * sin(angle));
 					if(hold >= 1) {
 						out->getEntry({i, j, k, l}) = M_PI_2;
 					} else if(hold <= -1) {
@@ -104,7 +104,8 @@ compchem::strategies::DefaultGeometryStrategy::findPlaneAngles(const compchem::A
 }
 
 compchem::Matrix<double> &
-compchem::strategies::DefaultGeometryStrategy::findTorsionAngles(const compchem::AbstractMolecule &mol, const compchem::Matrix<double> &bond_angles) {
+compchem::strategies::DefaultGeometryStrategy::findTorsionAngles(const compchem::AbstractMolecule &mol,
+		const compchem::Matrix<double> &bond_angles) {
 	Matrix<double> *out = new Matrix<double>({mol.natom(), mol.natom(),
 		mol.natom(), mol.natom()});
 
@@ -116,15 +117,15 @@ compchem::strategies::DefaultGeometryStrategy::findTorsionAngles(const compchem:
 						out->getEntry({i, j, k, l}) = 0;
 						continue;
 					}
-					std::vector<double> vij = {mol.x(i) - mol.x(j),
+					double vij[] = {mol.x(i) - mol.x(j),
 					                           mol.y(i) - mol.y(j),
 					                           mol.z(i) - mol.z(j)
 					};
-					std::vector<double> vjk = {mol.x(j) - mol.x(k),
+					double vjk[] = {mol.x(j) - mol.x(k),
 					                           mol.y(j) - mol.y(k),
 					                           mol.z(j) - mol.z(k)
 					};
-					std::vector<double> vkl = {mol.x(k) - mol.x(l),
+					double vkl[] = {mol.x(k) - mol.x(l),
 					                           mol.y(k) - mol.y(l),
 					                           mol.z(k) - mol.z(l)
 					};
@@ -132,13 +133,11 @@ compchem::strategies::DefaultGeometryStrategy::findTorsionAngles(const compchem:
 					double rjk = hypot3(vjk[0], vjk[1], vjk[2]);
 					double rkl = hypot3(vkl[0], vkl[1], vkl[2]);
 
-//					std::vector<double> eij = {vij[0] / rij, vij[1] / rij, vij[2] / rij};
-//					std::vector<double> ejk = {vjk[0] / rjk, vjk[1] / rjk, vjk[2] / rjk};
-//					std::vector<double> ekl = {vkl[0] / rkl, vkl[1] / rkl, vkl[2] / rkl};
-
 					double angle1 = bond_angles.getEntry({i, j, k});
 					double angle2 = bond_angles.getEntry({j, k, l});
-					double hold = (dotprod(crossprod(vjk, vij), crossprod(vkl, vjk))) /
+					double hold = ((vij[1] * vjk[2] - vij[2] * vjk[1]) * (vjk[1] * vkl[2] - vjk[2] * vkl[1]) +
+							(vij[2] * vjk[0] - vij[0] * vjk[2]) * (vjk[2] * vkl[0] - vjk[0] * vkl[2]) +
+							(vij[0] * vjk[1] - vij[1] * vjk[0]) * (vjk[0] * vkl[1] - vjk[1] * vkl[0])) /
 							(rij * rjk * rjk * rkl * sin(angle1) * sin(angle2));
 					if(hold >= 1) {
 						out->getEntry({i, j, k, l}) = 0;
