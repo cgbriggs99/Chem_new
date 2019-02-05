@@ -89,8 +89,8 @@ compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigen
 
 template<>
 void compchem::strategies::LapackEigenvalues<double>::eigen_all(
-		const compchem::AbstractMatrix<double> &mat, compchem::Matrix<double> *&evals,
-		compchem::Matrix<double> *&rvecs, compchem::Matrix<double> *&lvecs) {
+		const compchem::AbstractMatrix<double> &mat, compchem::Matrix<double> **evals,
+		compchem::Matrix<double> **rvecs, compchem::Matrix<double> **lvecs) {
 	double *work = (double *) malloc((size_t) (mat.getSize() * sizeof(double)));
 
 	double *outvals = new double[mat.getShape(0)];
@@ -107,9 +107,15 @@ void compchem::strategies::LapackEigenvalues<double>::eigen_all(
 			mat.getShape(1));
 	free(work);
 
-	*evals = *new Matrix<double>(outvals, { mat.getShape(0) });
-	*rvecs = *new Matrix<double>(outvr, { mat.getShape(0), mat.getShape(1) });
-	*lvecs = *new Matrix<double>(outvl, { mat.getShape(0), mat.getShape(1) });
+	if(evals != nullptr) {
+		*evals = new Matrix<double>(outvals, { mat.getShape(0) });
+	}
+	if(rvecs != nullptr) {
+		*rvecs = new Matrix<double>(outvr, { mat.getShape(0), mat.getShape(1) });
+	}
+	if(lvecs != nullptr) {
+		*lvecs = new Matrix<double>(outvl, { mat.getShape(0), mat.getShape(1) });
+	}
 	delete outvals;
 	delete temp;
 	delete rvecs;

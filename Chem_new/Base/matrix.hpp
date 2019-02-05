@@ -25,10 +25,10 @@ public:
 
 	virtual const T &getEntry(int index, ...) const = 0;
 	virtual const T &getEntry(std::vector<int> index) const = 0;
-	virtual void setEntry(T &ent, int index, ...) = 0;
-	virtual void setEntry(T &ent, std::vector<int> index) = 0;
-	virtual void setEntry(T &&ent, int index, ...) = 0;
-	virtual void setEntry(T &&ent, std::vector<int> index) = 0;
+	virtual void setEntry(const T &ent, int index, ...) = 0;
+	virtual void setEntry(const T &ent, std::vector<int> index) = 0;
+	virtual void setEntry(const T &&ent, int index, ...) = 0;
+	virtual void setEntry(const T &&ent, std::vector<int> index) = 0;
 	virtual int getSize() const = 0;
 	virtual int getShape(int dim) const = 0;
 	virtual int getDimension() const = 0;

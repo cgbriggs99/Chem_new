@@ -14,6 +14,7 @@
 namespace compchem {
 
 double amu(int z);
+int orbitals(int n);
 
 typedef enum {
 	SPHERICAL, LINEAR, OBLATE, PROLATE, ASYMMETRIC
@@ -108,6 +109,8 @@ public:
 	virtual int natom() const {
 		return (this->getAtoms().size());
 	}
+	virtual int nelectron() const = 0;
+	virtual int norbital() const = 0;
 	virtual void addAtom(Atom a) = 0;
 
 	virtual void translateAtoms(const std::vector<double> &diff) = 0;
@@ -117,6 +120,7 @@ public:
 	virtual double y(int i) const = 0;
 	virtual double z(int i) const = 0;
 	virtual double mass(int i) const = 0;
+	virtual double fZ(int i) const = 0;
 };
 }
 

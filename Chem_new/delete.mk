@@ -1,1 +1,1 @@
-RM=rm -f
+RM=del /f

@@ -17,9 +17,12 @@ namespace strategies {
 class DefaultMolecule : public AbstractMolecule {
 private:
 	std::vector<Atom> *atoms;
+	int num_electrons, num_orbitals;
 public:
 	DefaultMolecule() {
 		atoms = new std::vector<Atom>();
+		num_electrons = 0;
+		num_orbitals = 0;
 	}
 
 	//Defined in molecule.cpp
@@ -31,6 +34,16 @@ public:
 
 	void addAtom(Atom a) {
 		this->atoms->push_back(a);
+		num_electrons += a.getAtomicNum();
+		num_orbitals += compchem::orbitals((int) a.getAtomicNum());
+	}
+
+	int norbital() const {
+		return (num_orbitals);
+	}
+
+	int nelectron() const {
+		return (num_electrons);
 	}
 
 	void translateAtoms(const std::vector<double> &diff) override {
@@ -63,6 +76,10 @@ public:
 
 	double mass(int i) const override {
 		return (this->atoms->at(i).getMass());
+	}
+
+	double fZ(int i) const override {
+		return (this->atoms->at(i).getAtomicNum());
 	}
 };
 

@@ -39,10 +39,10 @@ public:
 	//Getters and setters.
 	const _T &getEntry(int index, ...) const override;
 	const _T &getEntry(std::vector<int> index) const override;
-	void setEntry(_T &ent, int index, ...) override;
-	void setEntry(_T &ent, std::vector<int> index) override;
-	void setEntry(_T &&ent, int index, ...) override;
-	void setEntry(_T &&ent, std::vector<int> index) override;
+	void setEntry(const _T &ent, int index, ...) override;
+	void setEntry(const _T &ent, std::vector<int> index) override;
+	void setEntry(const _T &&ent, int index, ...) override;
+	void setEntry(const _T &&ent, std::vector<int> index) override;
 	int getSize() const override {
 		return (this->size);
 	}

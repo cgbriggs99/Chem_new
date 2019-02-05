@@ -143,7 +143,7 @@ const _T &compchem::Matrix<_T, _Alloc>::getEntry(
 }
 
 template<typename _T, typename _Alloc>
-void compchem::Matrix<_T, _Alloc>::setEntry(_T &ent,
+void compchem::Matrix<_T, _Alloc>::setEntry(const _T &ent,
 		int index, ...) {
 	int offset = index;
 	va_list list;
@@ -165,7 +165,7 @@ void compchem::Matrix<_T, _Alloc>::setEntry(_T &ent,
 }
 
 template<typename _T, typename _Alloc>
-void compchem::Matrix<_T, _Alloc>::setEntry(_T &ent,
+void compchem::Matrix<_T, _Alloc>::setEntry(const _T &ent,
 		std::vector<int> index) {
 	if (this->dimensions != index.size()) {
 		throw(std::length_error(
@@ -190,7 +190,7 @@ void compchem::Matrix<_T, _Alloc>::setEntry(_T &ent,
 }
 
 template<typename _T, typename _Alloc>
-void compchem::Matrix<_T, _Alloc>::setEntry(_T &&ent,
+void compchem::Matrix<_T, _Alloc>::setEntry(const _T &&ent,
 		int index, ...) {
 	int offset = index;
 	va_list list;
@@ -212,7 +212,7 @@ void compchem::Matrix<_T, _Alloc>::setEntry(_T &&ent,
 }
 
 template<typename _T, typename _Alloc>
-void compchem::Matrix<_T, _Alloc>::setEntry(_T &&ent,
+void compchem::Matrix<_T, _Alloc>::setEntry(const _T &&ent,
 		std::vector<int> index) {
 	if (this->dimensions != index.size()) {
 		throw(std::length_error(
