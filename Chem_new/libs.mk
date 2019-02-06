@@ -1,2 +1,2 @@
-LAPACKDIR=D:/Lapack
+LAPACKDIR=C:/lapack
 PSIDIR=

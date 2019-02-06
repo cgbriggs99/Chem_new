@@ -16,7 +16,7 @@
 class SCFTest : public test::Test {
 private:
 	compchem::SCFStrategy *strat;
-	compchem::AbstractWavefunction *wfn;
+	compchem::strategies::DefaultWavefunction *wfn;
 	compchem::AbstractMolecule *mol;
 	const char *dir;
 public:
@@ -130,15 +130,15 @@ public:
 		readGeomFile("geometry");
 		//TODO Initialize the wavefunction.
 		wfn = new compchem::strategies::DefaultWavefunction(*mol);
-		compchem::Matrix<double> *s = &read2dFile(mol->norbital(), "s");
-		compchem::Matrix<double> *t = &read2dFile(mol->norbital(), "t");
-		compchem::Matrix<double> *v = &read2dFile(mol->norbital(), "v");
-		compchem::Matrix<double> *mux = &read2dFile(mol->norbital(), "mux");
-		compchem::Matrix<double> *muy = &read2dFile(mol->norbital(), "muy");
-		compchem::Matrix<double> *muz = &read2dFile(mol->norbital(), "muz");
+		wfn->setS(&read2dFile(mol->norbital(), "s"));
+		wfn->setT(&read2dFile(mol->norbital(), "t"));
+		wfn->setV(&read2dFile(mol->norbital(), "v"));
+		wfn->setMuX(&read2dFile(mol->norbital(), "mux"));
+		wfn->setMuY(&read2dFile(mol->norbital(), "muy"));
+		wfn->setMuZ(&read2dFile(mol->norbital(), "muz"));
 
 		double enuc = readValueFile("enuc");
-		compchem::strategies::TEIMatrix<double> *tei = &read4dFile(mol->norbital(), "eri");
+		wfn->setTEI(&read4dFile(mol->norbital(), "eri"));
 
 		compchem::Matrix<double> *hamiltonian = (compchem::Matrix<double> *) &strat->findHamiltonian(*wfn);
 		compchem::Matrix<double> *fock, *c, *density;
@@ -154,13 +154,6 @@ public:
 		compare2d(*hamiltonian, "hamiltonian");
 		compareList(std::vector<double>(moment->begin(), moment->end()), "moment");
 
-		delete s;
-		delete t;
-		delete v;
-		delete mux;
-		delete muy;
-		delete muz;
-		delete tei;
 		delete hamiltonian;
 		delete fock;
 		delete c;

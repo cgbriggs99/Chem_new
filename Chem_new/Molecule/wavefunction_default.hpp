@@ -111,6 +111,41 @@ public:
 		_muz->setEntry(val, i, j);
 	}
 
+	void setS(compchem::Matrix<double> *__restrict__ mat) {
+		delete _s;
+		_s = mat;
+	}
+
+	void setT(compchem::Matrix<double> *__restrict__ mat) {
+		delete _t;
+		_t = mat;
+	}
+
+	void setV(compchem::Matrix<double> *__restrict__ mat) {
+		delete _v;
+		_v = mat;
+	}
+
+	void setMuX(compchem::Matrix<double> *__restrict__ mat) {
+		delete _mux;
+		_mux = mat;
+	}
+
+	void setMuY(compchem::Matrix<double> *__restrict__ mat) {
+		delete _muy;
+		_muy = mat;
+	}
+
+	void setMuZ(compchem::Matrix<double> *__restrict__ mat) {
+		delete _muz;
+		_muz = mat;
+	}
+
+	void setTEI(compchem::strategies::TEIMatrix<double> *__restrict__ mat) {
+		delete _tei;
+		_tei = mat;
+	}
+
 	int getSize() const {
 		return (this->n);
 	}
