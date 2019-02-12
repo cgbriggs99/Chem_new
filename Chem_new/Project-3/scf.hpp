@@ -25,7 +25,8 @@ public:
 
 	virtual compchem::AbstractMatrix<double> &findHamiltonian(const compchem::AbstractWavefunction &wf) = 0;
 	virtual void runSCF(const compchem::AbstractWavefunction &wf, compchem::AbstractMatrix<double> **mo_fock,
-			compchem::AbstractMatrix<double> **lcaomo, compchem::AbstractMatrix<double> **density, double *energy) = 0;
+			compchem::AbstractMatrix<double> **lcaomo, compchem::AbstractMatrix<double> **density,
+			compchem::AbstractMatrix<double> **eigs, double *energy) = 0;
 	virtual std::vector<double> &findElectronCharge(const compchem::AbstractMolecule &mol, const compchem::AbstractWavefunction &wf,
 			const compchem::AbstractMatrix<double> &density) = 0;
 	virtual std::array<double, 3> &findDipole(const compchem::AbstractMolecule &mol, const compchem::AbstractMatrix<double> &density,

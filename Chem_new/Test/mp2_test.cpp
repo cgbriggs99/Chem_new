@@ -7,8 +7,8 @@
 
 #include "test.hpp"
 #include "../Project-3/scf_default.hpp"
-#include "../Base/matrix_tei.hpp"
-#include "../Base/math.hpp"
+#include "../Project-4/mp2_default.hpp"
+#include "../Base/base.hpp"
 #include "../Molecule/molecule_default.hpp"
 #include "../Molecule/wavefunction_default.hpp"
 #include "../Molecule/sto3g_basis_set.hpp"
@@ -16,26 +16,29 @@
 #include <unistd.h>
 
 template<typename _T>
-class SCFTest : public test::Test {
+class MP2Test : public test::Test {
 private:
-	compchem::SCFStrategy *strat;
+	compchem::AbstractMP2Strategy<_T> *strat;
+	compchem::SCFStrategy *scf;
 	compchem::strategies::DefaultWavefunction<_T> *wfn;
 	compchem::AbstractMolecule *mol;
 	const char *dir;
 public:
-	SCFTest(const char *dir) {
-		strat = new compchem::strategies::DefaultSCFStrategy();
+	MP2Test(const char *dir) {
+		strat = new compchem::strategies::DefaultMP2Strategy<_T>();
+		scf = new compchem::strategies::DefaultSCFStrategy();
 		this->dir = dir;
 		wfn = nullptr;
 		mol = new compchem::strategies::DefaultMolecule();
 	}
 
-	~SCFTest() {
+	~MP2Test() {
 		delete strat;
 		if(wfn != nullptr) {
 			delete wfn;
 		}
 		delete mol;
+		delete scf;
 	}
 
 	void compare2d(const compchem::Matrix<double> &mat, const char *filename) {
@@ -144,33 +147,20 @@ public:
 		wfn->setS(&read2dSymmFile(wfn->getSize(), "s"));
 		wfn->setT(&read2dSymmFile(wfn->getSize(), "t"));
 		wfn->setV(&read2dSymmFile(wfn->getSize(), "v"));
-		wfn->setMuX(&read2dSymmFile(wfn->getSize(), "mux"));
-		wfn->setMuY(&read2dSymmFile(wfn->getSize(), "muy"));
-		wfn->setMuZ(&read2dSymmFile(wfn->getSize(), "muz"));
-
 		wfn->setEnuc(readValueFile("enuc"));
 		wfn->setTEI(&read4dFile(wfn->getSize(), "eri"));
 
-		compchem::Matrix<double> *hamiltonian = (compchem::Matrix<double> *) &strat->findHamiltonian(*wfn);
-		compchem::Matrix<double> *fock, *c, *density;
-		double energy;
-		strat->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock, (compchem::AbstractMatrix<double> **) &c,
-				(compchem::AbstractMatrix<double> **) &density, nullptr, &energy);
-		std::vector<double> *charges = &strat->findElectronCharge(*mol, *wfn, *density);
-		std::array<double, 3> *moment = &strat->findDipole(*mol, *density, *wfn);
+		compchem::Matrix<double> *fock, *c, *eigs;
+		scf->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock, (compchem::AbstractMatrix<double> **) &c,
+				nullptr, (compchem::AbstractMatrix<double> **) &eigs, nullptr);
 
-		compare2d(*density, "density");
-		compareList(*charges, "charges");
-		compareValue(energy, "etotal");
-		compare2d(*hamiltonian, "hamiltonian");
-		compareList(std::vector<double>(moment->begin(), moment->end()), "moment");
+		double mp2_energy = strat->mp2Energy(*mol, wfn->two_electron(), *c, *eigs);
 
-		delete hamiltonian;
+		compareValue(mp2_energy, "mp2_energy");
+
+		delete eigs;
 		delete fock;
 		delete c;
-		delete density;
-		delete charges;
-		delete moment;
 		chdir("../");
 	}
 
@@ -178,12 +168,12 @@ public:
 
 
 int main(void) {
-	if(chdir("./data/scf") == -1) {
-		chdir("./Test/data/scf");
+	if(chdir("./data/mp2") == -1) {
+		chdir("./Test/data/mp2");
 	}
 
-	SCFTest<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water"), sto3g_methane("sto3g-methane");
-	SCFTest<compchem::strategies::DZBasisSet> dz_water("dz-water");
+	MP2Test<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water"), sto3g_methane("sto3g-methane");
+	MP2Test<compchem::strategies::DZBasisSet> dz_water("dz-water");
 
 	sto3g_water.runTest();
 	dz_water.runTest();

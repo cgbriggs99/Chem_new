@@ -22,10 +22,11 @@ compchem::AbstractMatrix<double> &compchem::strategies::DefaultSCFStrategy::find
 
 
 void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWavefunction &wf, compchem::AbstractMatrix<double> **mo_fock,
-		compchem::AbstractMatrix<double> **lcaomo, compchem::AbstractMatrix<double> **density, double *energy) {
+		compchem::AbstractMatrix<double> **lcaomo, compchem::AbstractMatrix<double> **density, \
+		compchem::AbstractMatrix<double> **_eigs, double *energy) {
 
 	compchem::Matrix<double> *s_half, *s_half_t, *fock = nullptr, *fock_ao, *c_prime = nullptr, *c = nullptr, *dens = nullptr,
-			*last_dens = nullptr, *work1, *work2;
+			*last_dens = nullptr, *work1, *work2, *eout = nullptr;
 	compchem::Matrix<double> *hamiltonian = (compchem::Matrix<double> *) &findHamiltonian(wf);
 	double etotal = 0, etot_last = 1, rms = 0, rms_last = 1;
 
@@ -66,6 +67,9 @@ void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWa
 			delete c_prime;
 		if(fock != nullptr)
 			delete fock;
+		if(eout != nullptr) {
+			delete eout;
+		}
 
 		last_dens = dens;
 
@@ -79,7 +83,7 @@ void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWa
 
 
 		//Diagonalize Fock matrix
-		eigs->eigen_all(*fock, nullptr, &c_prime, nullptr);
+		eigs->eigen_all(*fock, &eout, &c_prime, nullptr);
 
 		//Find the lcao.
 		c = (compchem::Matrix<double> *) &matarit->mult(*s_half, *c_prime);
@@ -143,6 +147,11 @@ void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWa
 		*density = dens;
 	} else {
 		delete dens;
+	}
+	if(_eigs != nullptr) {
+		*_eigs = eout;
+	} else {
+		delete eout;
 	}
 	delete s_half;
 	delete s_half_t;

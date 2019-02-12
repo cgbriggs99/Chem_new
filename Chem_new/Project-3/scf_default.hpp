@@ -33,7 +33,8 @@ public:
 	compchem::AbstractMatrix<double> &findHamiltonian(const compchem::AbstractWavefunction &wf);
 
 	void runSCF(const compchem::AbstractWavefunction &wf, compchem::AbstractMatrix<double> **mo_fock,
-			compchem::AbstractMatrix<double> **lcaomo, compchem::AbstractMatrix<double> **density, double *energy);
+			compchem::AbstractMatrix<double> **lcaomo, compchem::AbstractMatrix<double> **density,
+			compchem::AbstractMatrix<double> **eigs, double *energy);
 
 	std::vector<double> &findElectronCharge(const compchem::AbstractMolecule &mol, const compchem::AbstractWavefunction &wf,
 			const compchem::AbstractMatrix<double> &density);

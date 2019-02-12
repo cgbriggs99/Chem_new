@@ -10,12 +10,12 @@ CFLAGS=-g3 -ggdb -I $(LAPACKDIR)/include
 LDFLAGS=-L $(LAPACKDIR)/lib 
 LDLIBS=-llapacke -llapack -lcblas -lblas -lgfortran
 EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC) matrix_arithmetic_test$(EXEC) \
-	eigenvalue_test$(EXEC) geometry_test$(EXEC) hessian_test$(EXEC) scf_test$(EXEC)
+	eigenvalue_test$(EXEC) geometry_test$(EXEC) hessian_test$(EXEC) scf_test$(EXEC) mp2_test$(EXEC)
 
 .PHONY: all
-all: test_test atom_test matrix_test matrix_arithmetic_test geometry_test eigenvalue_test hessian_test scf_test
+all: test_test atom_test matrix_test matrix_arithmetic_test geometry_test eigenvalue_test hessian_test scf_test mp2_test
 
-
+#Be aware, some of these tests (scf, mp2) can take a long time. Run at your own risk.
 .PHONY: run_tests
 run_tests: $(EXECS)
 	$(call TESTCOMM,./logs/test_memcheck.log) $(call escape,$(CURDIR)/test_test$(EXEC) > $(CURDIR)/logs/test_test.log)
@@ -25,7 +25,8 @@ run_tests: $(EXECS)
 	$(call TESTCOMM,./logs/eigenvalue_memcheck.log) $(call escape,$(CURDIR)/eigenvalue_test$(EXEC) > $(CURDIR)/logs/eigenvalue_test.log)
 	$(call TESTCOMM,./logs/geometry_memcheck.log) $(call escape,$(CURDIR)/geometry_test$(EXEC) > $(CURDIR)/logs/geometry_test.log)
 	$(call TESTCOMM,./logs/hessian_memcheck.log) $(call escape,$(CURDIR)/hessian_test$(EXEC) > $(CURDIR)/logs/hessian_test.log)
-	$(call TESTCOMM,./logs/scf_memcheck.log) $(call escape,$(CURDIR)/scf_test$(EXEC) > $(CURDIR)/logs/scf_test.log)
+#	$(call TESTCOMM,./logs/scf_memcheck.log) $(call escape,$(CURDIR)/scf_test$(EXEC) > $(CURDIR)/logs/scf_test.log)
+#	$(call TESTCOMM,./logs/mp2_memcheck.log) $(call escape,$(CURDIR)/mp2_test$(EXEC) > $(CURDIR)/logs/mp2_test.log)
 	
 .PHONY: clean
 clean:
@@ -59,3 +60,9 @@ hessian_test: hessian_test.cpp ../Project-2/hessian_default.hpp test.hpp ../Mole
 scf_test: scf_test.cpp ../Project-3/scf_default.hpp ../Project-3/scf_default.cpp test.hpp ../Molecule/molecule_default.hpp \
 	../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp ../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp \
 	../Base/math.cpp ../Molecule/molecule.cpp ../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp
+	$(CXX) $(CXXFLAGS) -o scf_test $^ $(LDFLAGS) $(LDLIBS)
+	
+mp2_test: mp2_test.cpp ../Project-4/mp2_default.cpp ../Project-4/mp2_default.hpp ../Project-3/scf_default.hpp \
+	../Project-3/scf_default.cpp ../Molecule/molecule_default.hpp ../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp\
+	../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp ../Base/math.cpp ../Molecule/molecule.cpp \
+	../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp test.hpp
