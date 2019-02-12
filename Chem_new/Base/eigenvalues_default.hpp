@@ -30,7 +30,7 @@ public:
 	Matrix<T> &eigenvals(const AbstractMatrix<T> &mat) override;
 	Matrix<T> &eigenvecs_left(const AbstractMatrix<T> &mat) override;
 	Matrix<T> &eigenvecs_right(const AbstractMatrix<T> &mat) override;
-	void eigen_all(const AbstractMatrix<T> &mat, Matrix<T> *&evals, Matrix<T> *&rvecs, Matrix<T> *&lvecs) override;
+	void eigen_all(const AbstractMatrix<T> &mat, Matrix<T> **evals, Matrix<T> **rvecs, Matrix<T> **lvecs) override;
 };
 
 
@@ -67,7 +67,7 @@ Matrix<double> &LapackEigenvalues<double>::eigenvecs_right(const AbstractMatrix<
 
 template<>
 void LapackEigenvalues<double>::eigen_all(const AbstractMatrix<double> &mat,
-		Matrix<double> *&evals, Matrix<double> *&rvecs, Matrix<double> *&lvecs);
+		Matrix<double> **evals, Matrix<double> **rvecs, Matrix<double> **lvecs);
 
 }
 }

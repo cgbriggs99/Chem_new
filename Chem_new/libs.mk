@@ -1,1 +1,2 @@
-LAPACKDIR=/home/connor/lapack-Sandbox/lapack-final
+LAPACKDIR=C:/lapack
+PSIDIR=
