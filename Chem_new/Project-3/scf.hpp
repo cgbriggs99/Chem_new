@@ -28,7 +28,7 @@ public:
 			compchem::AbstractMatrix<double> **lcaomo, compchem::AbstractMatrix<double> **density, double *energy) = 0;
 	virtual std::vector<double> &findElectronCharge(const compchem::AbstractMolecule &mol, const compchem::AbstractWavefunction &wf,
 			const compchem::AbstractMatrix<double> &density) = 0;
-	virtual std::array<double, 3> &findDipole(const compchem::AbstractMatrix<double> &density,
+	virtual std::array<double, 3> &findDipole(const compchem::AbstractMolecule &mol, const compchem::AbstractMatrix<double> &density,
 			const compchem::AbstractWavefunction &wf) = 0;
 };
 

@@ -26,7 +26,6 @@ compchem::Matrix<_T, _Alloc>::Matrix(std::initializer_list<int> shape) {
 
 template<typename _T, typename _Alloc>
 compchem::Matrix<_T, _Alloc>::Matrix(const AbstractMatrix<_T> &copy) {
-	printf("Copied!\n");
 	this->dimensions = copy.getDimension();
 	this->size = copy.getSize();
 	this->shape = new int[this->dimensions];

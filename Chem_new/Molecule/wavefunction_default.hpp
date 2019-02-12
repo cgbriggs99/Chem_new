@@ -11,10 +11,12 @@
 #include "wavefunction.hpp"
 #include "../Base/matrix_tei.hpp"
 #include "molecule.hpp"
+#include "basis_set.hpp"
 
 namespace compchem {
 namespace strategies {
 
+template<typename _T>
 class DefaultWavefunction : public AbstractWavefunction {
 private:
 	compchem::Matrix<double> *_s, *_t, *_v, *_mux, *_muy, *_muz;
@@ -22,6 +24,7 @@ private:
 	compchem::strategies::TEIMatrix<double> *_tei;
 	int n;
 	int elecs;
+	_T *basis;
 
 public:
 	DefaultWavefunction(const compchem::AbstractMolecule &mol) {
@@ -33,7 +36,8 @@ public:
 		_muz = new compchem::Matrix<double>({mol.nelectron(), mol.nelectron()});
 		_enuc = 0;
 		_tei = new compchem::strategies::TEIMatrix<double>(mol.nelectron());
-		n = mol.norbital();
+		this->basis = new _T();
+		n = basis->norbitals(mol);
 		elecs = mol.nelectron();
 	}
 
@@ -45,6 +49,7 @@ public:
 		delete _muy;
 		delete _muz;
 		delete _tei;
+		delete basis;
 	}
 
 	const compchem::AbstractMatrix<double> &s() const {
@@ -152,6 +157,10 @@ public:
 
 	int nelectron() const {
 		return (this->elecs);
+	}
+
+	int norbitals(int z) const override {
+		return (this->basis->norbitals(z));
 	}
 };
 

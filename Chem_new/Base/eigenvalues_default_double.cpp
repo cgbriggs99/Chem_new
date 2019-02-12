@@ -102,10 +102,27 @@ void compchem::strategies::LapackEigenvalues<double>::eigen_all(
 			work[i * mat.getShape(1) + j] = mat.getEntry( { i, j });
 		}
 	}
-	LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'N', mat.getShape(0), work,
+	LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'V', 'V', mat.getShape(0), work,
 			mat.getShape(1), outvals, temp, outvl, mat.getShape(1), outvr,
 			mat.getShape(1));
 	free(work);
+
+	for(int i = 0; i < mat.getShape(0) - 1; i++) {
+		int max_ind = i;
+		for(int j = i; j < mat.getShape(0); j++) {
+			if(outvals[j] < outvals[max_ind]) {
+				max_ind = j;
+			}
+		}
+
+		if(max_ind != i) {
+			std::swap(outvals[max_ind], outvals[i]);
+			for(int j = 0; j < mat.getShape(1); j++) {
+				std::swap(outvl[j * mat.getShape(0) + max_ind], outvl[j * mat.getShape(0) + i]);
+				std::swap(outvr[j * mat.getShape(0) + max_ind], outvr[j * mat.getShape(0) + i]);
+			}
+		}
+	}
 
 	if(evals != nullptr) {
 		*evals = new Matrix<double>(outvals, { mat.getShape(0) });
@@ -116,9 +133,9 @@ void compchem::strategies::LapackEigenvalues<double>::eigen_all(
 	if(lvecs != nullptr) {
 		*lvecs = new Matrix<double>(outvl, { mat.getShape(0), mat.getShape(1) });
 	}
-	delete outvals;
-	delete temp;
-	delete rvecs;
-	delete lvecs;
+	delete[] outvals;
+	delete[] outvr;
+	delete[] outvl;
+	delete[] temp;
 }
 

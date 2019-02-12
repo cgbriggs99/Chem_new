@@ -26,7 +26,7 @@ void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWa
 
 	compchem::Matrix<double> *s_half, *s_half_t, *fock = nullptr, *fock_ao, *c_prime = nullptr, *c = nullptr, *dens = nullptr,
 			*last_dens = nullptr, *work1, *work2;
-	const compchem::Matrix<double> *hamiltonian = (const compchem::Matrix<double> *) &findHamiltonian(wf);
+	compchem::Matrix<double> *hamiltonian = (compchem::Matrix<double> *) &findHamiltonian(wf);
 	double etotal = 0, etot_last = 1, rms = 0, rms_last = 1;
 
 	/*
@@ -121,12 +121,13 @@ void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWa
 				double sum = hamiltonian->getEntry(i, j);
 				for(int k = 0; k < wf.getSize(); k++) {
 					for(int l = 0; l < wf.getSize(); l++) {
-						sum += dens->getEntry(k, l) * (2 * wf.two_electron().getEntry(i, j, k, l) - wf.two_electron().getEntry(i, l, k, j));
+						sum += dens->getEntry(k, l) * (2 * wf.two_electron().getEntry(i, j, k, l) - wf.two_electron().getEntry(i, k, j, l));
 					}
 				}
 				fock_ao->setEntry(sum, i, j);
 			}
 		}
+		continue;
 	}
 	if(mo_fock != nullptr) {
 		*mo_fock = fock;
@@ -146,6 +147,7 @@ void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWa
 	delete s_half;
 	delete s_half_t;
 	delete fock_ao;
+	delete hamiltonian;
 	if(c_prime != nullptr)
 		delete c_prime;
 	if(last_dens != nullptr) {
@@ -166,16 +168,16 @@ std::vector<double> &compchem::strategies::DefaultSCFStrategy::findElectronCharg
 
 	for(int i = 0; i < mol.natom(); i++) {
 		double sum = mol.fZ(i);
-		for(int j = ind; j < ind + compchem::orbitals((int) mol.fZ(i)); j++) {
-			sum -= 2 * (ds->getEntry(i, j));
+		for(int j = ind; j < ind + wf.norbitals((int) mol.fZ(i)); j++) {
+			sum -= 2 * (ds->getEntry(j, j));
 		}
-		ind += compchem::orbitals((int) mol.fZ(i));
+		ind += wf.norbitals((int) mol.fZ(i));
 		out->at(i) = sum;
 	}
 	delete ds;
 	return (*out);
 }
-std::array<double, 3> &compchem::strategies::DefaultSCFStrategy::findDipole(const compchem::AbstractMatrix<double> &density,
+std::array<double, 3> &compchem::strategies::DefaultSCFStrategy::findDipole(const compchem::AbstractMolecule &mol, const compchem::AbstractMatrix<double> &density,
 			const compchem::AbstractWavefunction &wf) {
 	std::array<double, 3> *out = new std::array<double, 3>();
 	out->at(0) = 0;
@@ -187,6 +189,12 @@ std::array<double, 3> &compchem::strategies::DefaultSCFStrategy::findDipole(cons
 			out->at(1) += 2 * density.getEntry(i, j) * wf.muy().getEntry(i, j);
 			out->at(2) += 2 * density.getEntry(i, j) * wf.muz().getEntry(i, j);
 		}
+	}
+
+	for(int i = 0; i < mol.natom(); i++) {
+		out->at(0) += mol.fZ(i) * mol.x(i);
+		out->at(1) += mol.fZ(i) * mol.y(i);
+		out->at(2) += mol.fZ(i) * mol.z(i);
 	}
 	return (*out);
 }

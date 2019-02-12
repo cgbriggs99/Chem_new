@@ -30,6 +30,7 @@ public:
 	virtual const compchem::AbstractMatrix<double> &muz() const = 0;
 	virtual int getSize() const = 0;
 	virtual int nelectron() const = 0;
+	virtual int norbitals(int z) const = 0;
 };
 
 }

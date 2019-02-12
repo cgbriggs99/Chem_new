@@ -110,7 +110,6 @@ public:
 		return (this->getAtoms().size());
 	}
 	virtual int nelectron() const = 0;
-	virtual int norbital() const = 0;
 	virtual void addAtom(Atom a) = 0;
 
 	virtual void translateAtoms(const std::vector<double> &diff) = 0;

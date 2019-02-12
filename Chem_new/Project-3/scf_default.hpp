@@ -38,7 +38,7 @@ public:
 	std::vector<double> &findElectronCharge(const compchem::AbstractMolecule &mol, const compchem::AbstractWavefunction &wf,
 			const compchem::AbstractMatrix<double> &density);
 
-	std::array<double, 3> &findDipole(const compchem::AbstractMatrix<double> &density,
+	std::array<double, 3> &findDipole(const compchem::AbstractMolecule &mol, const compchem::AbstractMatrix<double> &density,
 			const compchem::AbstractWavefunction &wf);
 };
 

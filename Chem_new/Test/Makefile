@@ -25,6 +25,7 @@ run_tests: $(EXECS)
 	$(call TESTCOMM,./logs/eigenvalue_memcheck.log) $(call escape,$(CURDIR)/eigenvalue_test$(EXEC) > $(CURDIR)/logs/eigenvalue_test.log)
 	$(call TESTCOMM,./logs/geometry_memcheck.log) $(call escape,$(CURDIR)/geometry_test$(EXEC) > $(CURDIR)/logs/geometry_test.log)
 	$(call TESTCOMM,./logs/hessian_memcheck.log) $(call escape,$(CURDIR)/hessian_test$(EXEC) > $(CURDIR)/logs/hessian_test.log)
+	$(call TESTCOMM,./logs/scf_memcheck.log) $(call escape,$(CURDIR)/scf_test$(EXEC) > $(CURDIR)/logs/scf_test.log)
 	
 .PHONY: clean
 clean:
