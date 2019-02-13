@@ -14,8 +14,10 @@ EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC) matrix_arithmetic_tes
 	ccsd_test$(EXEC)
 
 .PHONY: all
-all: test_test atom_test matrix_test matrix_arithmetic_test geometry_test eigenvalue_test hessian_test scf_test mp2_test \
-	ccsd_test
+all: $(EXECS)
+
+%$(EXEC): %.cpp
+	$(CXX) $(LDFLAGS) $(CXXFLAGS) -o $@ $^ $(LDLIBS)
 
 #Be aware, some of these tests (scf, mp2) can take a long time. Run at your own risk.
 .PHONY: run_tests
@@ -38,38 +40,38 @@ ifneq ($(wildcard $(CURDIR)/logs/*.log),)
 endif
 
 
-test_test: test_test.cpp test.hpp
+test_test$(EXEC): test_test.cpp test.hpp
 
-atom_test: atom_test.cpp ../Molecule/molecule.hpp test.hpp
+atom_test$(EXEC): atom_test.cpp ../Molecule/molecule.hpp test.hpp
 
-matrix_test: matrix_test.cpp ../Base/matrix.hpp ../Base/matrix.cpp
+matrix_test$(EXEC): matrix_test.cpp ../Base/matrix.hpp ../Base/matrix.cpp
 
-matrix_arithmetic_test: matrix_arithmetic_test.cpp ../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp ../Base/math.o
+matrix_arithmetic_test$(EXEC): matrix_arithmetic_test.cpp ../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp ../Base/math.o
 
-eigenvalue_test: eigenvalue_test.cpp ../Base/matrix.hpp ../Base/math.hpp ../Base/eigenvalues.hpp \
+eigenvalue_test$(EXEC): eigenvalue_test.cpp ../Base/matrix.hpp ../Base/math.hpp ../Base/eigenvalues.hpp \
 	../Base/eigenvalues_default.hpp ../Base/math.cpp ../Base/eigenvalues_default_double.cpp ../Base/matrix.cpp
 
-geometry_test: geometry_test.cpp ../Project-1/geometry_default.hpp \
+geometry_test$(EXEC): geometry_test.cpp ../Project-1/geometry_default.hpp \
 	test.hpp ../Molecule/molecule.hpp ../Molecule/molecule.cpp ../Project-1/geometry_default.cpp \
 	../Molecule/molecule_default.hpp ../Base/matrix.hpp ../Base/eigenvalues.hpp ../Base/math.cpp \
 	../Base/eigenvalues_default.hpp ../Base/eigenvalues_default_double.cpp ../Base/matrix.cpp
-	$(CXX) $(CXXFLAGS) -o geometry_test $^ $(LDFLAGS) $(LDLIBS)
+	$(CXX) $(CXXFLAGS) -o geometry_test$(EXEC) $^ $(LDFLAGS) $(LDLIBS)
 	
-hessian_test: hessian_test.cpp ../Project-2/hessian_default.hpp test.hpp ../Molecule/molecule_default.hpp \
+hessian_test$(EXEC): hessian_test.cpp ../Project-2/hessian_default.hpp test.hpp ../Molecule/molecule_default.hpp \
 	../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp ../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp \
 	../Base/math.cpp ../Molecule/molecule.cpp
 
-scf_test: scf_test.cpp ../Project-3/scf_default.hpp ../Project-3/scf_default.cpp test.hpp ../Molecule/molecule_default.hpp \
+scf_test$(EXEC): scf_test.cpp ../Project-3/scf_default.hpp ../Project-3/scf_default.cpp test.hpp ../Molecule/molecule_default.hpp \
 	../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp ../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp \
 	../Base/math.cpp ../Molecule/molecule.cpp ../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp
-	$(CXX) $(CXXFLAGS) -o scf_test $^ $(LDFLAGS) $(LDLIBS)
+	$(CXX) $(CXXFLAGS) -o scf_test$(EXEC) $^ $(LDFLAGS) $(LDLIBS)
 	
-mp2_test: mp2_test.cpp ../Project-4/mp2_default.cpp ../Project-4/mp2_default.hpp ../Project-3/scf_default.hpp \
+mp2_test$(EXEC): mp2_test.cpp ../Project-4/mp2_default.cpp ../Project-4/mp2_default.hpp ../Project-3/scf_default.hpp \
 	../Project-3/scf_default.cpp ../Molecule/molecule_default.hpp ../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp\
 	../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp ../Base/math.cpp ../Molecule/molecule.cpp \
 	../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp test.hpp
 
-ccsd_test: ccsd_test.cpp ../Project-5/ccsd_default.cpp ../Project-5/ccsd_default.hpp ../Project-3/scf_default.hpp \
+ccsd_test$(EXEC): ccsd_test.cpp ../Project-5/ccsd_default.cpp ../Project-5/ccsd_default.hpp ../Project-3/scf_default.hpp \
 	../Project-3/scf_default.cpp ../Molecule/molecule_default.hpp ../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp\
 	../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp ../Base/math.cpp ../Molecule/molecule.cpp \
 	../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp test.hpp
