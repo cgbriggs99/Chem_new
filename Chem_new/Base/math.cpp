@@ -7,6 +7,8 @@
 
 #include "math.hpp"
 #include <cmath>
+#include <exception>
+#include <stdexcept>
 
 double compchem::hypot3(double x, double y, double z) {
 	double a, b, c, x1, y1, z1;
@@ -48,6 +50,9 @@ double compchem::dotprod(std::vector<double> v1, std::vector<double> v2) {
 
 int compchem::compareDoubles(double a, double b, double diff) {
 	double off = diff * ((fabs(a) > fabs(b))? fabs(a): fabs(b));
+	if(std::isnan(fabs(a)) || std::isnan(fabs(b)) || std::isinf(fabs(a)) || std::isinf(fabs(b))) {
+		throw(new std::domain_error("Testing infinity or NaN!"));
+	}
 	if(fabs(a - b) <= diff || fabs(a - b) <= off) {
 		return (0);
 	} else if(a < b) {

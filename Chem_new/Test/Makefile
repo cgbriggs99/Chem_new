@@ -10,10 +10,12 @@ CFLAGS=-g3 -ggdb -I $(LAPACKDIR)/include
 LDFLAGS=-L $(LAPACKDIR)/lib 
 LDLIBS=-llapacke -llapack -lcblas -lblas -lgfortran
 EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC) matrix_arithmetic_test$(EXEC) \
-	eigenvalue_test$(EXEC) geometry_test$(EXEC) hessian_test$(EXEC) scf_test$(EXEC) mp2_test$(EXEC)
+	eigenvalue_test$(EXEC) geometry_test$(EXEC) hessian_test$(EXEC) scf_test$(EXEC) mp2_test$(EXEC) \
+	ccsd_test$(EXEC)
 
 .PHONY: all
-all: test_test atom_test matrix_test matrix_arithmetic_test geometry_test eigenvalue_test hessian_test scf_test mp2_test
+all: test_test atom_test matrix_test matrix_arithmetic_test geometry_test eigenvalue_test hessian_test scf_test mp2_test \
+	ccsd_test
 
 #Be aware, some of these tests (scf, mp2) can take a long time. Run at your own risk.
 .PHONY: run_tests
@@ -63,6 +65,11 @@ scf_test: scf_test.cpp ../Project-3/scf_default.hpp ../Project-3/scf_default.cpp
 	$(CXX) $(CXXFLAGS) -o scf_test $^ $(LDFLAGS) $(LDLIBS)
 	
 mp2_test: mp2_test.cpp ../Project-4/mp2_default.cpp ../Project-4/mp2_default.hpp ../Project-3/scf_default.hpp \
+	../Project-3/scf_default.cpp ../Molecule/molecule_default.hpp ../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp\
+	../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp ../Base/math.cpp ../Molecule/molecule.cpp \
+	../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp test.hpp
+
+ccsd_test: ccsd_test.cpp ../Project-5/ccsd_default.cpp ../Project-5/ccsd_default.hpp ../Project-3/scf_default.hpp \
 	../Project-3/scf_default.cpp ../Molecule/molecule_default.hpp ../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp\
 	../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp ../Base/math.cpp ../Molecule/molecule.cpp \
 	../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp test.hpp

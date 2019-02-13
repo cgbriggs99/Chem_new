@@ -7,7 +7,7 @@
 
 #include "test.hpp"
 #include "../Project-3/scf_default.hpp"
-#include "../Project-4/mp2_default.hpp"
+#include "../Project-5/ccsd_default.hpp"
 #include "../Base/base.hpp"
 #include "../Molecule/molecule_default.hpp"
 #include "../Molecule/wavefunction_default.hpp"
@@ -16,23 +16,23 @@
 #include <unistd.h>
 
 template<typename _T>
-class MP2Test : public test::Test {
+class CCSDTest : public test::Test {
 private:
-	compchem::AbstractMP2Strategy<_T> *strat;
+	compchem::AbstractCCSDCorrection *strat;
 	compchem::SCFStrategy *scf;
 	compchem::strategies::DefaultWavefunction<_T> *wfn;
 	compchem::AbstractMolecule *mol;
 	const char *dir;
 public:
-	MP2Test(const char *dir) {
-		strat = new compchem::strategies::DefaultMP2Strategy<_T>();
+	CCSDTest(const char *dir) {
+		strat = new compchem::strategies::DefaultCCSDCorrection();
 		scf = new compchem::strategies::DefaultSCFStrategy();
 		this->dir = dir;
 		wfn = nullptr;
 		mol = new compchem::strategies::DefaultMolecule();
 	}
 
-	~MP2Test() {
+	~CCSDTest() {
 		delete strat;
 		if(wfn != nullptr) {
 			delete wfn;
@@ -150,17 +150,18 @@ public:
 		wfn->setEnuc(readValueFile("enuc"));
 		wfn->setTEI(&read4dFile(wfn->getSize(), "eri"));
 
-		compchem::Matrix<double> *fock, *c, *eigs;
+		compchem::Matrix<double> *hamiltonian = (compchem::Matrix<double> *)&scf->findHamiltonian(*wfn), *fock, *c, *eigs;
 		scf->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock, (compchem::AbstractMatrix<double> **) &c,
 				nullptr, (compchem::AbstractMatrix<double> **) &eigs, nullptr);
 
-		double mp2_energy = strat->mp2Energy(*mol, wfn->two_electron(), *c, *eigs);
+		double ccsd_energy = strat->CCSDEnergy(*c, *fock, wfn->two_electron(), *eigs, *hamiltonian, mol->nelectron());
 
-		compareValue(mp2_energy, "mp2_energy");
+		compareValue(ccsd_energy, "ccsd_energy");
 
 		delete eigs;
 		delete fock;
 		delete c;
+		delete hamiltonian;
 		chdir("../");
 	}
 
@@ -172,8 +173,8 @@ int main(void) {
 		chdir("./Test/data/energies");
 	}
 
-	MP2Test<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water"), sto3g_methane("sto3g-methane");
-	MP2Test<compchem::strategies::DZBasisSet> dz_water("dz-water");
+	CCSDTest<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water"), sto3g_methane("sto3g-methane");
+	CCSDTest<compchem::strategies::DZBasisSet> dz_water("dz-water");
 
 	sto3g_water.runTest();
 	dz_water.runTest();
