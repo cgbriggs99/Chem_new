@@ -26,7 +26,8 @@ private:
 public:
 	MP2Test(const char *dir) {
 		strat = new compchem::strategies::DefaultMP2Strategy<_T>();
-		scf = new compchem::strategies::DefaultSCFStrategy();
+		scf = new compchem::strategies::DefaultSCFStrategy<compchem::strategies::LapackEigenvalues<double>,
+				compchem::strategies::DefaultMatrixArithmeticStrategy<double> >();
 		this->dir = dir;
 		wfn = nullptr;
 		mol = new compchem::strategies::DefaultMolecule();

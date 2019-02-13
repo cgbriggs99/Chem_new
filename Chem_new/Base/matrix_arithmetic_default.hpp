@@ -25,11 +25,16 @@ public:
 		;
 	}
 
-	compchem::AbstractMatrix<_T> &add(const compchem::AbstractMatrix<_T> &a, const compchem::AbstractMatrix<_T> &b);
-	compchem::AbstractMatrix<_T> &subtract(const compchem::AbstractMatrix<_T> &a, const compchem::AbstractMatrix<_T> &b);
-	compchem::AbstractMatrix<_T> &mult(const compchem::AbstractMatrix<_T> &a, const compchem::AbstractMatrix<_T> &b);
-	compchem::AbstractMatrix<_T> &inverse(const compchem::AbstractMatrix<_T> &a);
-	compchem::AbstractMatrix<_T> &transpose(const compchem::AbstractMatrix<_T> &a);
+	compchem::AbstractMatrix<_T> &add(const compchem::AbstractMatrix<_T> &a, const compchem::AbstractMatrix<_T> &b) override;
+	compchem::AbstractMatrix<_T> &subtract(const compchem::AbstractMatrix<_T> &a, const compchem::AbstractMatrix<_T> &b) override;
+	compchem::AbstractMatrix<_T> &mult(const compchem::AbstractMatrix<_T> &a, const compchem::AbstractMatrix<_T> &b) override;
+	compchem::AbstractMatrix<_T> &inverse(const compchem::AbstractMatrix<_T> &a) override;
+	compchem::AbstractMatrix<_T> &transpose(const compchem::AbstractMatrix<_T> &a) override;
+	int solve(compchem::AbstractMatrix<_T> &coeffs,
+				compchem::AbstractMatrix<_T> &consts) override;
+
+	_T det(const compchem::AbstractMatrix<_T> &mat) override;
+	_T trace(const compchem::AbstractMatrix<_T> &mat) override;
 };
 
 }

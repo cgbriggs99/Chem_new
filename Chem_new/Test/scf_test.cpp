@@ -9,6 +9,7 @@
 #include "../Project-3/scf_default.hpp"
 #include "../Base/matrix_tei.hpp"
 #include "../Base/math.hpp"
+#include "../Base/base.hpp"
 #include "../Molecule/molecule_default.hpp"
 #include "../Molecule/wavefunction_default.hpp"
 #include "../Molecule/sto3g_basis_set.hpp"
@@ -24,7 +25,9 @@ private:
 	const char *dir;
 public:
 	SCFTest(const char *dir) {
-		strat = new compchem::strategies::DefaultSCFStrategy();
+		strat = new compchem::strategies::DefaultSCFStrategy<
+				compchem::strategies::LapackEigenvalues<double>,
+				compchem::strategies::DefaultMatrixArithmeticStrategy<double> >();
 		this->dir = dir;
 		wfn = nullptr;
 		mol = new compchem::strategies::DefaultMolecule();
