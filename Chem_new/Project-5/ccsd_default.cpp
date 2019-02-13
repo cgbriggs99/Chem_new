@@ -11,7 +11,7 @@
 //This is probably not producing the right tensor.
 static compchem::Matrix<double> &calculateSOTEI(
         const compchem::AbstractMatrix<double> &tei,
-        const compchem::AbstractMatrix<double> &orbs) {
+        const compchem::AbstractMatrix<double> &orbs, int occupied) {
 	compchem::Matrix<double> *out = new compchem::Matrix<double>(
 	        {2 * tei.getShape(0), 2 * tei.getShape(0), 2 * tei.getShape(0), 2
 	                * tei.getShape(0)}), *motei =
@@ -52,23 +52,13 @@ static compchem::Matrix<double> &calculateSOTEI(
 			for(int r = 0; r < 2 * tei.getShape(0); r++) {
 				for(int s = 0; s < 2 * tei.getShape(0); s++) {
 					out->setEntry(
-					        motei->getEntry(p / 2, r / 2, q / 2, s / 2)
-					                * ((p % 2) == (r % 2)? 1: 0)
-					                * ((q % 2) == (s % 2)? 1: 0)
-					                - motei->getEntry(p / 2, s / 2, q / 2,
-					                        r / 2) * ((p % 2) == (s % 2)? 0: 1)
-					                        * ((q % 2) == (r % 2)? 0: 1), p, q,
+					        tei.getEntry(p / 2, r / 2, q / 2, s / 2)
+					                * ((p % 2 == r % 2)? 1: 0)
+					                * ((q % 2 == s % 2)? 1: 0)
+					                - tei.getEntry(p / 2, s / 2, q / 2,
+					                        r / 2) * ((p % 2 == s % 2)? 1: 0)
+					                        * ((q % 2 == r % 2)? 1: 0), p, q,
 					        r, s);
-//					out->setEntry(
-//							tei.getEntry(p / 2, r / 2, q / 2, s / 2)
-//									* ((p % 2) == (r % 2) ? 1 : 0)
-//									* ((q % 2) == (s % 2) ? 1 : 0)
-////									+ tei.getEntry(p / 2, s / 2, q / 2,
-////											r / 2)
-////											* ((p % 2) == (s % 2) ? 1 : 0)
-////											* ((q % 2) == (r % 2) ? 1 : 0)
-//									, p,
-//							q, r, s);
 				}
 			}
 		}
@@ -109,13 +99,13 @@ static compchem::Matrix<double> &calculateSOFock(
 		}
 	}
 	//Generate the test fock matrix.
-	for(int i = 0; i < 2 * fock.getShape(0); i++) {
-		for(int j = 0; j < 2 * fock.getShape(0); j++) {
-			double sum1 = moham->getEntry(i / 2, j / 2);
+	for(int p = 0; p < 2 * fock.getShape(0); p++) {
+		for(int q = 0; q < 2 * fock.getShape(0); q++) {
+			double sum1 = hamiltonian.getEntry(p / 2, q / 2) * ((p % 2 == q % 2)? 1: 0);
 			for(int k = 0; k < occupied; k++) {
-				sum1 += sotei.getEntry(i, k, j, k);
+				sum1 += sotei.getEntry(p, k, q, k);
 			}
-			mofock_test->setEntry(sum1, i, j);
+			mofock_test->setEntry(sum1, p, q);
 		}
 	}
 
@@ -138,11 +128,6 @@ static compchem::Matrix<double> &calculateSOFock(
 			out->setEntry(
 			        mofock->getEntry(i / 2, j / 2) * ((i % 2 == j % 2)? 1: 0),
 			        i, j);
-//			if(i == j) {
-//				out->setEntry(energies.getEntry(i / 2), i, j);
-//			} else {
-//				out->setEntry(0, i, j);
-//			}
 		}
 	}
 	delete mofock;
@@ -535,7 +520,7 @@ double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
 	                        * fock.getShape(0), 2 * fock.getShape(0)});
 
 	double energy = 0, energy_prev = 1;
-	sotei = &calculateSOTEI(teri, orbitals);
+	sotei = &calculateSOTEI(teri, orbitals, nelectrons);
 	sofock = &calculateSOFock(fock, orbitals, energies, hamiltonian, *sotei, nelectrons);
 
 	for(int i = 0; i < nelectrons; i++) {
