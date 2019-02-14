@@ -20,7 +20,7 @@ private:
 	_T *data;
 	int n;
 	int size;
-
+	_Alloc allocator;
 public:
 	TEIMatrix(int n);
 	virtual ~TEIMatrix();
