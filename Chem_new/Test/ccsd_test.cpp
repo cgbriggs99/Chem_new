@@ -6,8 +6,8 @@
  */
 
 #include "test.hpp"
-#include "../Project-8/diis_scf.hpp"
-#include "../Project-4/mp2_default.hpp"
+#include "../Project-3/scf_default.hpp"
+#include "../Project-5/ccsd_default.hpp"
 #include "../Base/base.hpp"
 #include "../Molecule/molecule_default.hpp"
 #include "../Molecule/wavefunction_default.hpp"
@@ -16,24 +16,23 @@
 #include <unistd.h>
 
 template<typename _T>
-class MP2Test : public test::Test {
+class CCSDTest : public test::Test {
 private:
-	compchem::AbstractMP2Strategy<_T> *strat;
+	compchem::AbstractCCSDCorrection *strat;
 	compchem::SCFStrategy *scf;
 	compchem::strategies::DefaultWavefunction<_T> *wfn;
 	compchem::AbstractMolecule *mol;
 	const char *dir;
 public:
-	MP2Test(const char *dir) {
-		strat = new compchem::strategies::DefaultMP2Strategy<_T>();
-		scf = new compchem::strategies::DefaultSCFStrategy<compchem::strategies::LapackEigenvalues<double>,
-				compchem::strategies::DefaultMatrixArithmeticStrategy<double> >();
+	CCSDTest(const char *dir) {
+		strat = new compchem::strategies::DefaultCCSDCorrection();
+		scf = new compchem::strategies::DefaultSCFStrategy();
 		this->dir = dir;
 		wfn = nullptr;
 		mol = new compchem::strategies::DefaultMolecule();
 	}
 
-	~MP2Test() {
+	~CCSDTest() {
 		delete strat;
 		if(wfn != nullptr) {
 			delete wfn;
@@ -104,10 +103,7 @@ public:
 
 		while(!feof(fp)) {
 				double a = 0, b = 0, c = 0;
-				int count = fscanf(fp, "%lf %lf %lf", &a, &b, &c);
-				if(count <= 0) {
-					break;
-				}
+				fscanf(fp, "%lf %lf %lf", &a, &b, &c);
 				out->setEntry(c, (int) a - 1, (int) b - 1);
 		}
 		fclose(fp);
@@ -121,10 +117,7 @@ public:
 
 			while(!feof(fp)) {
 					double a = 1, b = 1, c = 0;
-					int count = fscanf(fp, "%lf %lf %lf", &a, &b, &c);
-					if(count <= 0) {
-						break;
-					}
+					fscanf(fp, "%lf %lf %lf", &a, &b, &c);
 					out->setEntry(c, (int) a - 1, (int) b - 1);
 					out->setEntry(c, (int) b - 1, (int) a - 1);
 			}
@@ -136,15 +129,10 @@ public:
 		FILE *fp = fopen(filename, "r");
 
 		compchem::strategies::TEIMatrix<double> *out = new compchem::strategies::TEIMatrix<double>(n);
-		int lines = 0;
 
 		while(!feof(fp)) {
 			double a = 0, b = 0, c = 0, d = 0, e = 0;
-			int count = fscanf(fp, "%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e);
-			lines++;
-			if(count <= 0) {
-				break;
-			}
+			fscanf(fp, "%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e);
 			out->setEntry(e, (int) a - 1, (int) b - 1, (int) c - 1, (int) d - 1);
 		}
 		fclose(fp);
@@ -162,17 +150,18 @@ public:
 		wfn->setEnuc(readValueFile("enuc"));
 		wfn->setTEI(&read4dFile(wfn->getSize(), "eri"));
 
-		compchem::Matrix<double> *fock, *c, *eigs;
+		compchem::Matrix<double> *hamiltonian = (compchem::Matrix<double> *)&scf->findHamiltonian(*wfn), *fock, *c, *eigs;
 		scf->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock, (compchem::AbstractMatrix<double> **) &c,
 				nullptr, (compchem::AbstractMatrix<double> **) &eigs, nullptr);
 
-		double mp2_energy = strat->mp2Energy(*mol, wfn->two_electron(), *c, *eigs);
+		double ccsd_energy = strat->CCSDEnergy(*c, *fock, wfn->two_electron(), *eigs, *hamiltonian, mol->nelectron());
 
-		compareValue(mp2_energy, "mp2_energy");
+		compareValue(ccsd_energy, "ccsd_energy");
 
 		delete eigs;
 		delete fock;
 		delete c;
+		delete hamiltonian;
 		chdir("../");
 	}
 
@@ -184,12 +173,12 @@ int main(void) {
 		chdir("./Test/data/energies");
 	}
 
-	MP2Test<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water");
+	CCSDTest<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water"), sto3g_methane("sto3g-methane");
+	CCSDTest<compchem::strategies::DZBasisSet> dz_water("dz-water");
+
 	sto3g_water.runTest();
-	MP2Test<compchem::strategies::STO3GBasisSet> sto3g_methane("sto3g-methane");
-	sto3g_methane.runTest();
-	MP2Test<compchem::strategies::DZBasisSet> dz_water("dz-water");
 	dz_water.runTest();
+	sto3g_methane.runTest();
 	return (0);
 }
 
