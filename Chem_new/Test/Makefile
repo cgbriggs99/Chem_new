@@ -10,6 +10,8 @@ CFLAGS=-g3 -ggdb -I $(LAPACKDIR)/include
 LDFLAGS=-L $(LAPACKDIR)/lib 
 LDLIBS=-llapacke -llapack -lcblas -lblas -lgfortran
 EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC) matrix_arithmetic_test$(EXEC) \
+	eigenvalue_test$(EXEC) geometry_test$(EXEC) hessian_test$(EXEC) scf_test$(EXEC) \
+	mp2_test$(EXEC) ccsd_test$(EXEC) diis_scf_test$(EXEC)
 
 
 .PHONY: all
