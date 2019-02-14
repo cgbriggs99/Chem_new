@@ -7,7 +7,8 @@
 
 #include "test.hpp"
 #include "../Project-8/diis_scf.hpp"
-#include "../Project-4/mp2_default.hpp"
+#include "../Base/matrix_tei.hpp"
+#include "../Base/math.hpp"
 #include "../Base/base.hpp"
 #include "../Molecule/molecule_default.hpp"
 #include "../Molecule/wavefunction_default.hpp"
@@ -16,30 +17,28 @@
 #include <unistd.h>
 
 template<typename _T>
-class MP2Test : public test::Test {
+class SCFTest : public test::Test {
 private:
-	compchem::AbstractMP2Strategy<_T> *strat;
-	compchem::SCFStrategy *scf;
+	compchem::SCFStrategy *strat;
 	compchem::strategies::DefaultWavefunction<_T> *wfn;
 	compchem::AbstractMolecule *mol;
 	const char *dir;
 public:
-	MP2Test(const char *dir) {
-		strat = new compchem::strategies::DefaultMP2Strategy<_T>();
-		scf = new compchem::strategies::DefaultSCFStrategy<compchem::strategies::LapackEigenvalues<double>,
+	SCFTest(const char *dir) {
+		strat = new compchem::strategies::SCF_DIISStrategy<
+				compchem::strategies::LapackEigenvalues<double>,
 				compchem::strategies::DefaultMatrixArithmeticStrategy<double> >();
 		this->dir = dir;
 		wfn = nullptr;
 		mol = new compchem::strategies::DefaultMolecule();
 	}
 
-	~MP2Test() {
+	~SCFTest() {
 		delete strat;
 		if(wfn != nullptr) {
 			delete wfn;
 		}
 		delete mol;
-		delete scf;
 	}
 
 	void compare2d(const compchem::Matrix<double> &mat, const char *filename) {
@@ -104,10 +103,7 @@ public:
 
 		while(!feof(fp)) {
 				double a = 0, b = 0, c = 0;
-				int count = fscanf(fp, "%lf %lf %lf", &a, &b, &c);
-				if(count <= 0) {
-					break;
-				}
+				fscanf(fp, "%lf %lf %lf", &a, &b, &c);
 				out->setEntry(c, (int) a - 1, (int) b - 1);
 		}
 		fclose(fp);
@@ -121,10 +117,7 @@ public:
 
 			while(!feof(fp)) {
 					double a = 1, b = 1, c = 0;
-					int count = fscanf(fp, "%lf %lf %lf", &a, &b, &c);
-					if(count <= 0) {
-						break;
-					}
+					fscanf(fp, "%lf %lf %lf", &a, &b, &c);
 					out->setEntry(c, (int) a - 1, (int) b - 1);
 					out->setEntry(c, (int) b - 1, (int) a - 1);
 			}
@@ -136,15 +129,10 @@ public:
 		FILE *fp = fopen(filename, "r");
 
 		compchem::strategies::TEIMatrix<double> *out = new compchem::strategies::TEIMatrix<double>(n);
-		int lines = 0;
 
 		while(!feof(fp)) {
 			double a = 0, b = 0, c = 0, d = 0, e = 0;
-			int count = fscanf(fp, "%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e);
-			lines++;
-			if(count <= 0) {
-				break;
-			}
+			fscanf(fp, "%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e);
 			out->setEntry(e, (int) a - 1, (int) b - 1, (int) c - 1, (int) d - 1);
 		}
 		fclose(fp);
@@ -159,20 +147,33 @@ public:
 		wfn->setS(&read2dSymmFile(wfn->getSize(), "s"));
 		wfn->setT(&read2dSymmFile(wfn->getSize(), "t"));
 		wfn->setV(&read2dSymmFile(wfn->getSize(), "v"));
+		wfn->setMuX(&read2dSymmFile(wfn->getSize(), "mux"));
+		wfn->setMuY(&read2dSymmFile(wfn->getSize(), "muy"));
+		wfn->setMuZ(&read2dSymmFile(wfn->getSize(), "muz"));
+
 		wfn->setEnuc(readValueFile("enuc"));
 		wfn->setTEI(&read4dFile(wfn->getSize(), "eri"));
 
-		compchem::Matrix<double> *fock, *c, *eigs;
-		scf->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock, (compchem::AbstractMatrix<double> **) &c,
-				nullptr, (compchem::AbstractMatrix<double> **) &eigs, nullptr);
+		compchem::Matrix<double> *hamiltonian = (compchem::Matrix<double> *) &strat->findHamiltonian(*wfn);
+		compchem::Matrix<double> *fock, *c, *density;
+		double energy;
+		strat->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock, (compchem::AbstractMatrix<double> **) &c,
+				(compchem::AbstractMatrix<double> **) &density, nullptr, &energy);
+		std::vector<double> *charges = &strat->findElectronCharge(*mol, *wfn, *density);
+		std::array<double, 3> *moment = &strat->findDipole(*mol, *density, *wfn);
 
-		double mp2_energy = strat->mp2Energy(*mol, wfn->two_electron(), *c, *eigs);
+		compare2d(*density, "density");
+		compareList(*charges, "charges");
+		compareValue(energy, "etotal");
+		compare2d(*hamiltonian, "hamiltonian");
+		compareList(std::vector<double>(moment->begin(), moment->end()), "moment");
 
-		compareValue(mp2_energy, "mp2_energy");
-
-		delete eigs;
+		delete hamiltonian;
 		delete fock;
 		delete c;
+		delete density;
+		delete charges;
+		delete moment;
 		chdir("../");
 	}
 
@@ -180,16 +181,17 @@ public:
 
 
 int main(void) {
-	if(chdir("./data/mp2") == -1) {
-		chdir("./Test/data/mp2");
+	if(chdir("./data/scf") == -1) {
+		chdir("./Test/data/scf");
 	}
 
-	MP2Test<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water");
+	SCFTest<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water");
 	sto3g_water.runTest();
-	MP2Test<compchem::strategies::STO3GBasisSet> sto3g_methane("sto3g-methane");
+	SCFTest<compchem::strategies::STO3GBasisSet> sto3g_methane("sto3g-methane");
 	sto3g_methane.runTest();
-	MP2Test<compchem::strategies::DZBasisSet> dz_water("dz-water");
+	SCFTest<compchem::strategies::DZBasisSet> dz_water("dz-water");
 	dz_water.runTest();
+
 	return (0);
 }
 
