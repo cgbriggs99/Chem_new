@@ -25,7 +25,7 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 
 	compchem::Matrix<double> *s_half, *s_half_t, *fock = nullptr, *fock_ao,
 	        *c_prime = nullptr, *c = nullptr, *dens = nullptr, *last_dens =
-	                nullptr, *work1, *work2, *work3, *eout = nullptr;
+	                nullptr, *work1, *work2, *work3, *work4, *eout = nullptr;
 	compchem::Matrix<double> *hamiltonian =
 	        (compchem::Matrix<double> *) &this->findHamiltonian(wf);
 	double etotal = 0, etot_last = 1, rms = 0, rms_last = 1;
@@ -78,12 +78,16 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 			work1 = (compchem::Matrix<double> *) &this->matarit->mult(*fock, *dens);
 			work2 = (compchem::Matrix<double> *) &this->matarit->mult(*work1, wf.s());
 			delete work1;
+			work1 = nullptr;
 			work1 = (compchem::Matrix<double> *) &this->matarit->mult(wf.s(), *dens);
 			work3 = (compchem::Matrix<double> *) &this->matarit->mult(*work1, *fock);
 			delete work1;
+			work1 = nullptr;
 			work1 = (compchem::Matrix<double> *) &this->matarit->subtract(*work2, *work3);
 			delete work2;
 			delete work3;
+			work2 = nullptr;
+			work3 = nullptr;
 
 
 			if(errmats[pos] != nullptr) {
@@ -96,19 +100,20 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 				delete fockmats[pos];
 			}
 			errmats[pos] = work1;
-			fockmats[pos] = fock;
+			fockmats[pos] = fock_ao;
 
 			//If work1 is deleted, the stored matrix will be deleted as well. Nullify to prevent this.
 			work1 = nullptr;
+			fock_ao = nullptr;
 
 			//Build new minimization array.
 			work1 = new compchem::Matrix<double>(
-			    { _max_depth + 1, _max_depth + 1 });
-			work1->setEntry(0, _max_depth, _max_depth);
-			work2 = new compchem::Matrix<double>( { _max_depth + 1, 1 });
+			    { size + 1, size + 1 });
+			work1->setEntry(0, size, size);
+			work2 = new compchem::Matrix<double>( { size + 1, 1 });
 
-			for(int i = 0; i < size; i++, iter1++) {
-				for(int j = 0; j < i; j++) {
+			for(int i = 0; i < size; i++) {
+				for(int j = 0; j <= i; j++) {
 					double sum = 0;
 					const compchem::Matrix<double> *e1 = errmats[i], *e2 = errmats[j];
 					for(int k = 0; k < wf.getSize(); k++) {
@@ -121,12 +126,12 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 				}
 			}
 
-			for(int i = 0; i < _max_depth; i++) {
-				work1->setEntry(-1, i, _max_depth);
-				work1->setEntry(-1, _max_depth, i);
+			for(int i = 0; i < size; i++) {
+				work1->setEntry(-1, i, size);
+				work1->setEntry(-1, size, i);
 				work2->setEntry(0, i, 0);
 			}
-			work2->setEntry(-1, _max_depth, 0);
+			work2->setEntry(-1, size, 0);
 
 			//Solve.
 			this->matarit->solve(*work1, *work2);
@@ -141,21 +146,23 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 					work1->setEntry(0, i, j);
 				}
 			}
-			for(int i = 0; i < _max_depth - 1; i++, iter++) {
+			for(int i = 0; i < size; i++) {
 				work3 = (compchem::Matrix<double> *) &this->matarit->mult(
-				    fockmats[i], work2->getEntry(i, 0));
-				work2 = (compchem::Matrix<double> *) &this->matarit->add(*work1, *work3);
+				    *fockmats[i], work2->getEntry(i, 0));
+				work4 = (compchem::Matrix<double> *) &this->matarit->add(*work1, *work3);
 				delete work1;
-				work1 = work2;
+				delete work3;
+				work1 = work4;
 			}
-			work2 = nullptr;
+			work4 = nullptr;
+			delete work2;
 
 			//Found the new fock matrix.
 			fock_ao = work1;
 			work1 = nullptr;
 			pos++;
 			if(pos >= _max_depth) {
-				pos -= max_depth;
+				pos -= _max_depth;
 			}
 		}
 
