@@ -75,12 +75,12 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 
 		//Do DIIS.
 		if(dens != nullptr) {
-			work1 = (compchem::Matrix<double> *) &this->matarit->mult(*fock, *dens);
+			work1 = (compchem::Matrix<double> *) &this->matarit->mult(*fock_ao, *dens);
 			work2 = (compchem::Matrix<double> *) &this->matarit->mult(*work1, wf.s());
 			delete work1;
 			work1 = nullptr;
 			work1 = (compchem::Matrix<double> *) &this->matarit->mult(wf.s(), *dens);
-			work3 = (compchem::Matrix<double> *) &this->matarit->mult(*work1, *fock);
+			work3 = (compchem::Matrix<double> *) &this->matarit->mult(*work1, *fock_ao);
 			delete work1;
 			work1 = nullptr;
 			work1 = (compchem::Matrix<double> *) &this->matarit->subtract(*work2, *work3);
@@ -165,10 +165,14 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 				pos -= _max_depth;
 			}
 		}
+		if(fock != nullptr) {
+			delete fock;
+		}
 
 		//Find mo Fock matrix
 		work1 = (compchem::Matrix<double> *) &this->matarit->mult(*s_half_t,
 		    *fock_ao);
+
 		fock = (compchem::Matrix<double> *) &this->matarit->mult(*work1, *s_half);
 		delete work1;
 
@@ -226,10 +230,16 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 		}
 		continue;
 	}
+
+	for(int i = 0; i < size; i++) {
+		delete fockmats[i];
+		delete errmats[i];
+	}
+
 	if(mo_fock != nullptr) {
-		*mo_fock = fock;
+		*mo_fock = fock_ao;
 	} else {
-		delete fock;
+		delete fock_ao;
 	}
 	if(lcaomo != nullptr) {
 		*lcaomo = c;
@@ -248,7 +258,7 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 	}
 	delete s_half;
 	delete s_half_t;
-	delete fock_ao;
+	delete fock;
 	delete hamiltonian;
 	if(c_prime != nullptr) delete c_prime;
 	if(last_dens != nullptr) {

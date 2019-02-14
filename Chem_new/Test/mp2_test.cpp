@@ -6,7 +6,7 @@
  */
 
 #include "test.hpp"
-#include "../Project-3/scf_default.hpp"
+#include "../Project-8/diis_scf.hpp"
 #include "../Project-4/mp2_default.hpp"
 #include "../Base/base.hpp"
 #include "../Molecule/molecule_default.hpp"
@@ -104,7 +104,10 @@ public:
 
 		while(!feof(fp)) {
 				double a = 0, b = 0, c = 0;
-				fscanf(fp, "%lf %lf %lf", &a, &b, &c);
+				int count = fscanf(fp, "%lf %lf %lf", &a, &b, &c);
+				if(count <= 0) {
+					break;
+				}
 				out->setEntry(c, (int) a - 1, (int) b - 1);
 		}
 		fclose(fp);
@@ -118,7 +121,10 @@ public:
 
 			while(!feof(fp)) {
 					double a = 1, b = 1, c = 0;
-					fscanf(fp, "%lf %lf %lf", &a, &b, &c);
+					int count = fscanf(fp, "%lf %lf %lf", &a, &b, &c);
+					if(count <= 0) {
+						break;
+					}
 					out->setEntry(c, (int) a - 1, (int) b - 1);
 					out->setEntry(c, (int) b - 1, (int) a - 1);
 			}
@@ -130,10 +136,15 @@ public:
 		FILE *fp = fopen(filename, "r");
 
 		compchem::strategies::TEIMatrix<double> *out = new compchem::strategies::TEIMatrix<double>(n);
+		int lines = 0;
 
 		while(!feof(fp)) {
 			double a = 0, b = 0, c = 0, d = 0, e = 0;
-			fscanf(fp, "%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e);
+			int count = fscanf(fp, "%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e);
+			lines++;
+			if(count <= 0) {
+				break;
+			}
 			out->setEntry(e, (int) a - 1, (int) b - 1, (int) c - 1, (int) d - 1);
 		}
 		fclose(fp);
@@ -155,7 +166,7 @@ public:
 		scf->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock, (compchem::AbstractMatrix<double> **) &c,
 				nullptr, (compchem::AbstractMatrix<double> **) &eigs, nullptr);
 
-		double mp2_energy = strat->mp2Energy(*mol, wfn->two_electron(), *c, *eigs);
+		double mp2_energy = strat->mp2Energy(*mol, wfn->two_electron(), *c, *fock);
 
 		compareValue(mp2_energy, "mp2_energy");
 
@@ -173,12 +184,12 @@ int main(void) {
 		chdir("./Test/data/mp2");
 	}
 
-	MP2Test<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water"), sto3g_methane("sto3g-methane");
-	MP2Test<compchem::strategies::DZBasisSet> dz_water("dz-water");
-
+	MP2Test<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water");
 	sto3g_water.runTest();
-	dz_water.runTest();
+	MP2Test<compchem::strategies::STO3GBasisSet> sto3g_methane("sto3g-methane");
 	sto3g_methane.runTest();
+	MP2Test<compchem::strategies::DZBasisSet> dz_water("dz-water");
+	dz_water.runTest();
 	return (0);
 }
 

@@ -185,12 +185,13 @@ int main(void) {
 		chdir("./Test/data/scf");
 	}
 
-	SCFTest<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water"), sto3g_methane("sto3g-methane");
-	SCFTest<compchem::strategies::DZBasisSet> dz_water("dz-water");
-
+	SCFTest<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water");
 	sto3g_water.runTest();
-	dz_water.runTest();
+	SCFTest<compchem::strategies::STO3GBasisSet> sto3g_methane("sto3g-methane");
 	sto3g_methane.runTest();
+	SCFTest<compchem::strategies::DZBasisSet> dz_water("dz-water");
+	dz_water.runTest();
+
 	return (0);
 }
 
