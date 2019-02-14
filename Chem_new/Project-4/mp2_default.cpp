@@ -16,7 +16,7 @@ double compchem::strategies::DefaultMP2Strategy<_T>::mp2Energy(
         const compchem::AbstractMolecule &mol,
         const compchem::AbstractMatrix<double> &tei,
         const compchem::AbstractMatrix<double> &orbs,
-        const compchem::AbstractMatrix<double> &fock) {
+        const compchem::AbstractMatrix<double> &eigs) {
 	int orbitals = basis_set->norbitals(mol);
 //	compchem::Matrix<double> *motei =
 //	        new compchem::Matrix<double>({orbitals, orbitals, orbitals, orbitals});
@@ -49,22 +49,6 @@ double compchem::strategies::DefaultMP2Strategy<_T>::mp2Energy(
 		}
 	}
 
-	compchem::Matrix<double> *mofock = new compchem::Matrix<double>(
-	        {fock.getShape(0), fock.getShape(0)});
-	for(int i = 0; i < fock.getShape(0); i++) {
-		for(int j = 0; j < fock.getShape(0); j++) {
-			double sum1 = 0;
-			for(int k = 0; k < fock.getShape(0); k++) {
-				double sum2 = 0;
-				for(int l = 0; l < fock.getShape(0); l++) {
-					sum2 += orbs.getEntry(l, j) * fock.getEntry(k, l);
-				}
-				sum1 += orbs.getEntry(k, i) * sum2;
-			}
-			mofock->setEntry(sum1, i, j);
-		}
-	}
-
 	double energy = 0;
 	for(int i = 0; i < mol.nelectron() / 2; i++) {
 		for(int j = 0; j < mol.nelectron() / 2; j++) {
@@ -73,14 +57,11 @@ double compchem::strategies::DefaultMP2Strategy<_T>::mp2Energy(
 					energy += (motei->getEntry(i, a, j, b)
 					        * (2 * motei->getEntry(i, a, j, b)
 					                - motei->getEntry(i, b, j, a)))
-					        / (mofock->getEntry(i, i) + mofock->getEntry(j, j)
-					                - mofock->getEntry(a, a)
-					                - mofock->getEntry(b, b));
+					        / (eigs.getEntry(i) + eigs.getEntry(j) - eigs.getEntry(a) - eigs.getEntry(b));
 				}
 			}
 		}
 	}
-	delete mofock;
 	delete motei;
 	return (energy);
 }

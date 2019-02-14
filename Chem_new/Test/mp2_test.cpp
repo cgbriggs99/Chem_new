@@ -166,7 +166,7 @@ public:
 		scf->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock, (compchem::AbstractMatrix<double> **) &c,
 				nullptr, (compchem::AbstractMatrix<double> **) &eigs, nullptr);
 
-		double mp2_energy = strat->mp2Energy(*mol, wfn->two_electron(), *c, *fock);
+		double mp2_energy = strat->mp2Energy(*mol, wfn->two_electron(), *c, *eigs);
 
 		compareValue(mp2_energy, "mp2_energy");
 
