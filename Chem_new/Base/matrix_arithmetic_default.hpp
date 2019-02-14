@@ -35,6 +35,11 @@ public:
 
 	_T det(const compchem::AbstractMatrix<_T> &mat) override;
 	_T trace(const compchem::AbstractMatrix<_T> &mat) override;
+
+	compchem::AbstractMatrix<_T> &mult(
+		        const compchem::AbstractMatrix<_T> &a, const _T &b) override;
+	compchem::AbstractMatrix<_T> &mult(
+		        const compchem::AbstractMatrix<_T> &a, const _T &&b) override;
 };
 
 }

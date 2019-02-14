@@ -32,6 +32,6 @@ public:
 }
 }
 
-
+#include "diis_scf_default.cpp"
 
 #endif /* PROJECT_8_DIIS_SCF_HPP_ */

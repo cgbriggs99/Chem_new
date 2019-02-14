@@ -295,6 +295,30 @@ _T compchem::strategies::DefaultMatrixArithmeticStrategy<_T>::trace(const compch
 	return (sum);
 }
 
+template<typename _T>
+compchem::AbstractMatrix<_T> &compchem::strategies::DefaultMatrixArithmeticStrategy<_T>::mult(
+	        const compchem::AbstractMatrix<_T> &a, const _T &b) {
+	compchem::Matrix<double> *out = new compchem::Matrix<double>({a.getShape(0), a.getShape(1)});
+	for(int i = 0; i < a.getShape(0); i++) {
+		for(int j = 0; j < a.getShape(1); j++) {
+			out->setEntry(a.getEntry(i, j) * b, i, j);
+		}
+	}
+	return (*out);
+}
+
+template<typename _T>
+compchem::AbstractMatrix<_T> &compchem::strategies::DefaultMatrixArithmeticStrategy<_T>::mult(
+	        const compchem::AbstractMatrix<_T> &a, const _T &&b) {
+	compchem::Matrix<double> *out = new compchem::Matrix<double>({a.getShape(0), a.getShape(1)});
+	for(int i = 0; i < a.getShape(0); i++) {
+		for(int j = 0; j < a.getShape(1); j++) {
+			out->setEntry(a.getEntry(i, j) * b, i, j);
+		}
+	}
+	return (*out);
+}
+
 #undef abs
 
 #endif

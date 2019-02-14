@@ -30,8 +30,9 @@ public:
 	        const compchem::AbstractMatrix<_T> &a,
 	        const compchem::AbstractMatrix<_T> &b) = 0;
 	virtual compchem::AbstractMatrix<_T> &mult(
-			const compchem::AbstractMatrix<_T> &a,
-			const _T &b) = 0;
+	        const compchem::AbstractMatrix<_T> &a, const _T &b) = 0;
+	virtual compchem::AbstractMatrix<_T> &mult(
+	        const compchem::AbstractMatrix<_T> &a, const _T &&b) = 0;
 	virtual compchem::AbstractMatrix<_T> &inverse(
 	        const compchem::AbstractMatrix<_T> &a) = 0;
 	virtual compchem::AbstractMatrix<_T> &transpose(
@@ -40,7 +41,7 @@ public:
 	//Returns the rank, and puts the resulting constants in the consts array,
 	//and the resulting coefficients in the coeffs array.
 	virtual int solve(compchem::AbstractMatrix<_T> &coeffs,
-	        compchem::AbstractMatrix<_T> &consts) = 0;
+	                  compchem::AbstractMatrix<_T> &consts) = 0;
 
 	virtual _T det(const compchem::AbstractMatrix<_T> &mat) = 0;
 	virtual _T trace(const compchem::AbstractMatrix<_T> &mat) = 0;
