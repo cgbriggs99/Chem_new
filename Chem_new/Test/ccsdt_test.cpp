@@ -178,8 +178,7 @@ public:
 		delete hamiltonian;
 		hamiltonian = (compchem::Matrix<double> *) &scf->findHamiltonian(*wfn);
 
-		double ccsdt_energy = strat->CCEnergy(*c, *fock, wfn->two_electron(),
-		        *eigs, mol->nelectron());
+		double ccsdt_energy = strat->CCEnergy(*c, *fock, wfn->two_electron(), mol->nelectron());
 
 		compareValue(ccsdt_energy + energy, "ccsdt_energy");
 

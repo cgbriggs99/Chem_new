@@ -495,7 +495,6 @@ double compchem::strategies::DefaultCCSDCorrection::CCEnergy(
 		}
 	}
 
-	//This is not the problem.
 	for(int i = 0; i < nelectrons; i++) {
 		for(int j = 0; j < nelectrons; j++) {
 			for(int a = nelectrons; a < sofock->getShape(0); a++) {
@@ -579,6 +578,8 @@ double compchem::strategies::DefaultCCSDCorrection::CCEnergy(
 	delete hold2;
 	delete t1;
 	delete t2;
+	delete sofock;
+	delete sotei;
 
 	return (energy);
 }

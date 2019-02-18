@@ -10,7 +10,6 @@
 
 #include "ccsdt.hpp"
 
-#include "ccsd_default.hpp"
 #include <cmath>
 
 static compchem::Matrix<double> &calculateSOTEI(
@@ -696,7 +695,7 @@ double compchem::strategies::DefaultCCSDTCorrection::CCEnergy(
 	calculateT3D(*sofock, *sotei, *t1, *t2, nelectrons, *t3d);
 	calculateT3C(*sofock, *sotei, *t1, *t2, nelectrons, *t3c);
 
-	double sum = 0;
+	sum = 0;
 	for(int i = 0; i < nelectrons; i++) {
 		for(int j = 0; j < nelectrons; j++) {
 			for(int k = 0; k < nelectrons; k++) {
@@ -728,6 +727,8 @@ double compchem::strategies::DefaultCCSDTCorrection::CCEnergy(
 	delete t2;
 	delete t3c;
 	delete t3d;
+	delete sofock;
+	delete sotei;
 
 	return (energy);
 }

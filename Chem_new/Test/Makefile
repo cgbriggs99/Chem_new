@@ -11,10 +11,11 @@ LDFLAGS=-L $(LAPACKDIR)/lib
 LDLIBS=-llapacke -llapack -lcblas -lblas -lgfortran
 EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC) matrix_arithmetic_test$(EXEC) \
 	eigenvalue_test$(EXEC) geometry_test$(EXEC) hessian_test$(EXEC) scf_test$(EXEC) mp2_test$(EXEC) \
-	ccsd_test$(EXEC)
+	ccsd_test$(EXEC) ccsdt_test$(EXEC) diis_scf_test$(EXEC)
 
 .PHONY: all
 all: $(EXECS)
+	$(info $^)
 
 %$(EXEC): %.cpp
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) -o $@ $^ $(LDLIBS)
@@ -31,6 +32,9 @@ run_tests: $(EXECS)
 	$(call TESTCOMM,./logs/hessian_memcheck.log) $(call escape,$(CURDIR)/hessian_test$(EXEC) > $(CURDIR)/logs/hessian_test.log)
 #	$(call TESTCOMM,./logs/scf_memcheck.log) $(call escape,$(CURDIR)/scf_test$(EXEC) > $(CURDIR)/logs/scf_test.log)
 #	$(call TESTCOMM,./logs/mp2_memcheck.log) $(call escape,$(CURDIR)/mp2_test$(EXEC) > $(CURDIR)/logs/mp2_test.log)
+#	$(call TESTCOMM,./logs/ccsd_memcheck.log) $(call escape,$(CURDIR)/ccsd_test$(EXEC) > $(CURDIR)/logs/ccsd_test.log)
+#	$(call TESTCOMM,./logs/ccsdt_memcheck.log) $(call escape,$(CURDIR)/ccsdt_test$(EXEC) > $(CURDIR)/logs/ccsdt_test.log)
+	$(call TESTCOMM,./logs/diis_scf_memcheck.log) $(call escape,$(CURDIR)/diis_scf_test$(EXEC) > $(CURDIR)/logs/diis_scf_test.log)
 	
 .PHONY: clean
 clean:
@@ -55,8 +59,7 @@ geometry_test$(EXEC): geometry_test.cpp ../Project-1/geometry_default.hpp \
 	test.hpp ../Molecule/molecule.hpp ../Molecule/molecule.cpp ../Project-1/geometry_default.cpp \
 	../Molecule/molecule_default.hpp ../Base/matrix.hpp ../Base/eigenvalues.hpp ../Base/math.cpp \
 	../Base/eigenvalues_default.hpp ../Base/eigenvalues_default_double.cpp ../Base/matrix.cpp
-	$(CXX) $(CXXFLAGS) -o geometry_test$(EXEC) $^ $(LDFLAGS) $(LDLIBS)
-	
+
 hessian_test$(EXEC): hessian_test.cpp ../Project-2/hessian_default.hpp test.hpp ../Molecule/molecule_default.hpp \
 	../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp ../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp \
 	../Base/math.cpp ../Molecule/molecule.cpp
@@ -64,8 +67,7 @@ hessian_test$(EXEC): hessian_test.cpp ../Project-2/hessian_default.hpp test.hpp 
 scf_test$(EXEC): scf_test.cpp ../Project-3/scf_default.hpp ../Project-3/scf_default.cpp test.hpp ../Molecule/molecule_default.hpp \
 	../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp ../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp \
 	../Base/math.cpp ../Molecule/molecule.cpp ../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp
-	$(CXX) $(CXXFLAGS) -o scf_test$(EXEC) $^ $(LDFLAGS) $(LDLIBS)
-	
+
 mp2_test$(EXEC): mp2_test.cpp ../Project-4/mp2_default.cpp ../Project-4/mp2_default.hpp ../Project-3/scf_default.hpp \
 	../Project-3/scf_default.cpp ../Molecule/molecule_default.hpp ../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp\
 	../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp ../Base/math.cpp ../Molecule/molecule.cpp \
@@ -75,3 +77,14 @@ ccsd_test$(EXEC): ccsd_test.cpp ../Project-5/ccsd_default.cpp ../Project-5/ccsd_
 	../Project-3/scf_default.cpp ../Molecule/molecule_default.hpp ../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp\
 	../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp ../Base/math.cpp ../Molecule/molecule.cpp \
 	../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp test.hpp
+
+ccsdt_test$(EXEC): ccsdt_test.cpp ../Project-6/ccsdt.cpp ../Project-6/ccsdt.hpp ../Project-3/scf_default.hpp \
+	../Project-3/scf_default.cpp ../Molecule/molecule_default.hpp ../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp\
+	../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp ../Base/math.cpp ../Molecule/molecule.cpp \
+	../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp test.hpp
+
+diis_scf_test$(EXEC): diis_scf_test.cpp ../Project-8/diis_scf.hpp ../Project-8/diis_scf_default.cpp \
+	../Project-3/scf_default.hpp ../Project-3/scf_default.cpp test.hpp ../Molecule/molecule_default.hpp \
+	../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp ../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp \
+	../Base/math.cpp ../Molecule/molecule.cpp ../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp \
+	../Base/matrix_tei.hpp ../Base/matrix_tei.cpp
