@@ -31,9 +31,10 @@ run_tests: $(EXECS)
 	$(call TESTCOMM,./logs/eigenvalue_memcheck.log) $(call escape,$(CURDIR)/eigenvalue_test$(EXEC) > $(CURDIR)/logs/eigenvalue_test.log)
 	$(call TESTCOMM,./logs/geometry_memcheck.log) $(call escape,$(CURDIR)/geometry_test$(EXEC) > $(CURDIR)/logs/geometry_test.log)
 	$(call TESTCOMM,./logs/hessian_memcheck.log) $(call escape,$(CURDIR)/hessian_test$(EXEC) > $(CURDIR)/logs/hessian_test.log)
-	$(call TESTCOMM,./logs/scf_memcheck.log) $(call escape,$(CURDIR)/scf_test$(EXEC) > $(CURDIR)/logs/scf_test.log)
-	$(call TESTCOMM,./logs/mp2_memcheck.log) $(call escape,$(CURDIR)/mp2_test$(EXEC) > $(CURDIR)/logs/mp2_test.log)
-	$(call TESTCOMM,./logs/diis_scf_memcheck.log) $(call escape,$(CURDIR)/diis_scf_test$(EXEC) > $(CURDIR)/logs/diis_scf_test.log)
+#	$(call TESTCOMM,./logs/scf_memcheck.log) $(call escape,$(CURDIR)/scf_test$(EXEC) > $(CURDIR)/logs/scf_test.log)
+#	$(call TESTCOMM,./logs/mp2_memcheck.log) $(call escape,$(CURDIR)/mp2_test$(EXEC) > $(CURDIR)/logs/mp2_test.log)
+	$(call TESTCOMM,./logs/ccsd_memcheck.log) $(call escape,$(CURDIR)/ccsd_test$(EXEC) > $(CURDIR)/logs/ccsd_test.log)
+#	$(call TESTCOMM,./logs/diis_scf_memcheck.log) $(call escape,$(CURDIR)/diis_scf_test$(EXEC) > $(CURDIR)/logs/diis_scf_test.log)
 	
 .PHONY: clean
 clean:

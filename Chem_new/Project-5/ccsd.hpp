@@ -23,10 +23,10 @@ public:
 	}
 
 	virtual double CCSDEnergy(const compchem::AbstractMatrix<double> &orbitals,
-			const compchem::AbstractMatrix<double> &fock,
-			const compchem::AbstractMatrix<double> &teri,
-			const compchem::AbstractMatrix<double> &energies, const compchem::AbstractMatrix<double> &hamiltonian,
-			int nelectrons) = 0;
+	        const compchem::AbstractMatrix<double> &fock,
+	        const compchem::AbstractMatrix<double> &teri,
+	        const compchem::AbstractMatrix<double> &energies,
+	        int nelectrons, compchem::AbstractMatrix<double> **t1_amps, compchem::AbstractMatrix<double> **t2_amps) = 0;
 };
 
 }

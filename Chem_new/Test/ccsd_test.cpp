@@ -137,10 +137,15 @@ public:
 
 		compchem::strategies::TEIMatrix<double> *out =
 		        new compchem::strategies::TEIMatrix<double>(n);
+		int lines = 0;
 
 		while(!feof(fp)) {
 			double a = 0, b = 0, c = 0, d = 0, e = 0;
-			fscanf(fp, "%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e);
+			int count = fscanf(fp, "%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e);
+			lines++;
+			if(count <= 0) {
+				break;
+			}
 			out->setEntry(e, (int) a - 1, (int) b - 1, (int) c - 1,
 			        (int) d - 1);
 		}
