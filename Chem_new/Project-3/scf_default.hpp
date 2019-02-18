@@ -15,14 +15,15 @@
 namespace compchem {
 namespace strategies {
 
+template<typename _Eigen, typename _Matarit>
 class DefaultSCFStrategy : public SCFStrategy {
-private:
-	compchem::EigenvalueStrategy<double> *eigs;
-	compchem::MatrixArithmeticStrategy<double> *matarit;
+protected:
+	_Eigen *eigs;
+	_Matarit *matarit;
 public:
 	DefaultSCFStrategy() {
-		eigs = new compchem::strategies::LapackEigenvalues<double>();
-		matarit = new compchem::strategies::DefaultMatrixArithmeticStrategy<double>();
+		eigs = new _Eigen();
+		matarit = new _Matarit();
 	}
 
 	virtual ~DefaultSCFStrategy() {
@@ -46,6 +47,6 @@ public:
 }
 }
 
-
+#include "scf_default.cpp"
 
 #endif /* PROJECT_3_SCF_DEFAULT_HPP_ */

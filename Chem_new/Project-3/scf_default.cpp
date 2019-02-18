@@ -5,10 +5,13 @@
  *      Author: Connor
  */
 
+#ifndef __SCF_DEFAULT_CPP__
+#define __SCF_DEFAULT_CPP__
+
 #include "scf_default.hpp"
 
-
-compchem::AbstractMatrix<double> &compchem::strategies::DefaultSCFStrategy::findHamiltonian(const compchem::AbstractWavefunction &wf) {
+template<typename _E, typename _M>
+compchem::AbstractMatrix<double> &compchem::strategies::DefaultSCFStrategy<_E, _M>::findHamiltonian(const compchem::AbstractWavefunction &wf) {
 	compchem::Matrix<double> *out = new compchem::Matrix<double>({wf.getSize(), wf.getSize()});
 	const compchem::AbstractMatrix<double> *t = &wf.t(), *v = &wf.v();
 
@@ -20,8 +23,8 @@ compchem::AbstractMatrix<double> &compchem::strategies::DefaultSCFStrategy::find
 	return (*out);
 }
 
-
-void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWavefunction &wf, compchem::AbstractMatrix<double> **mo_fock,
+template<typename _E, typename _M>
+void compchem::strategies::DefaultSCFStrategy<_E, _M>::runSCF(const compchem::AbstractWavefunction &wf, compchem::AbstractMatrix<double> **mo_fock,
 		compchem::AbstractMatrix<double> **lcaomo, compchem::AbstractMatrix<double> **density, \
 		compchem::AbstractMatrix<double> **_eigs, double *energy) {
 
@@ -134,14 +137,14 @@ void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWa
 		continue;
 	}
 	if(mo_fock != nullptr) {
-		*mo_fock = fock;
+		*mo_fock = fock_ao;
 	} else {
 		delete fock;
 	}
 	if(lcaomo != nullptr) {
-		*lcaomo = c_prime;
+		*lcaomo = c;
 	} else {
-		delete c_prime;
+		delete c;
 	}
 	if(density != nullptr) {
 		*density = dens;
@@ -149,15 +152,16 @@ void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWa
 		delete dens;
 	}
 	if(_eigs != nullptr) {
-		*_eigs = &eigs->eigenvals(*fock);
+		*_eigs = eout;
+	} else {
+		delete eout;
 	}
-	delete eout;
 	delete s_half;
 	delete s_half_t;
-	delete fock_ao;
+	delete fock;
 	delete hamiltonian;
-	if(c != nullptr)
-		delete c;
+	if(c_prime != nullptr)
+		delete c_prime;
 	if(last_dens != nullptr) {
 		delete last_dens;
 	}
@@ -166,8 +170,8 @@ void compchem::strategies::DefaultSCFStrategy::runSCF(const compchem::AbstractWa
 	}
 }
 
-
-std::vector<double> &compchem::strategies::DefaultSCFStrategy::findElectronCharge(const compchem::AbstractMolecule &mol,
+template<typename _E, typename _M>
+std::vector<double> &compchem::strategies::DefaultSCFStrategy<_E, _M>::findElectronCharge(const compchem::AbstractMolecule &mol,
 		const compchem::AbstractWavefunction &wf,
 		const compchem::AbstractMatrix<double> &density) {
 	compchem::AbstractMatrix<double> *ds = &this->matarit->mult(density, wf.s());
@@ -185,7 +189,9 @@ std::vector<double> &compchem::strategies::DefaultSCFStrategy::findElectronCharg
 	delete ds;
 	return (*out);
 }
-std::array<double, 3> &compchem::strategies::DefaultSCFStrategy::findDipole(const compchem::AbstractMolecule &mol, const compchem::AbstractMatrix<double> &density,
+
+template<typename _E, typename _M>
+std::array<double, 3> &compchem::strategies::DefaultSCFStrategy<_E, _M>::findDipole(const compchem::AbstractMolecule &mol, const compchem::AbstractMatrix<double> &density,
 			const compchem::AbstractWavefunction &wf) {
 	std::array<double, 3> *out = new std::array<double, 3>();
 	out->at(0) = 0;
@@ -207,4 +213,4 @@ std::array<double, 3> &compchem::strategies::DefaultSCFStrategy::findDipole(cons
 	return (*out);
 }
 
-
+#endif
