@@ -45,14 +45,14 @@ test_test$(EXEC): test_test.cpp test.hpp
 
 atom_test$(EXEC): atom_test.cpp ../Molecule/molecule.hpp test.hpp
 
-matrix_test$(EXEC): matrix_test.cpp ../Base/matrix.hpp ../Base/matrix.cpp
+matrix_test$(EXEC): matrix_test.cpp ../Base/matrix.hpp ../Base/matrix.cpp ../Base/matrix_default.hpp ../Project-11/disk_allocator.hpp ../Project-11/disk_allocator.cpp
 
-matrix_arithmetic_test$(EXEC): matrix_arithmetic_test.cpp ../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp ../Base/math.o
+matrix_arithmetic_test$(EXEC): matrix_arithmetic_test.cpp ../Base/matrix_arithmetic_default.hpp ../Base/matrix_default.hpp ../Base/matrix_arithmetic_default.cpp ../Base/math.o
 
-eigenvalue_test$(EXEC): eigenvalue_test.cpp ../Base/matrix.hpp ../Base/math.hpp ../Base/eigenvalues.hpp \
+eigenvalue_test$(EXEC): eigenvalue_test.cpp ../Base/matrix.hpp ../Base/matrix_default.hpp ../Base/math.hpp ../Base/eigenvalues.hpp \
 	../Base/eigenvalues_default.hpp ../Base/math.cpp ../Base/eigenvalues_default_double.cpp ../Base/matrix.cpp
 
-geometry_test$(EXEC): geometry_test.cpp ../Project-1/geometry_default.hpp \
+geometry_test$(EXEC): geometry_test.cpp ../Base/matrix_default.hpp ../Project-1/geometry_default.hpp \
 	test.hpp ../Molecule/molecule.hpp ../Molecule/molecule.cpp ../Project-1/geometry_default.cpp \
 	../Molecule/molecule_default.hpp ../Base/matrix.hpp ../Base/eigenvalues.hpp ../Base/math.cpp \
 	../Base/eigenvalues_default.hpp ../Base/eigenvalues_default_double.cpp ../Base/matrix.cpp
