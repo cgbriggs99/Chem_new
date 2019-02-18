@@ -26,7 +26,11 @@ private:
 public:
 	CCSDTest(const char *dir) {
 		strat = new compchem::strategies::DefaultCCSDCorrection();
-		scf = new compchem::strategies::DefaultSCFStrategy();
+		scf =
+		        new compchem::strategies::DefaultSCFStrategy<
+		                compchem::strategies::LapackEigenvalues<double>,
+		                compchem::strategies::DefaultMatrixArithmeticStrategy<
+		                        double>>();
 		this->dir = dir;
 		wfn = nullptr;
 		mol = new compchem::strategies::DefaultMolecule();
@@ -48,7 +52,9 @@ public:
 			for(int j = 0; j < mat.getShape(1); j++) {
 				double val = 0;
 				int ignore = fscanf(fp, "%lf", &val);
-				assert(compchem::compareDoubles(mat.getEntry(i, j), val, 0.001) == 0);
+				assert(
+				        compchem::compareDoubles(mat.getEntry(i, j), val, 0.001)
+				                == 0);
 			}
 		}
 		fclose(fp);
@@ -87,7 +93,7 @@ public:
 		FILE *fp = fopen(filename, "r");
 		int ignore = fscanf(fp, "%d", &num);
 
-		for (int i = 0; i < num; i++) {
+		for(int i = 0; i < num; i++) {
 			double n = 0, x = 0, y = 0, z = 0;
 			ignore = fscanf(fp, "%lf %lf %lf %lf", &n, &x, &y, &z);
 			mol->addAtom(compchem::Atom(n, compchem::amu(n), 0, x, y, z));
@@ -99,41 +105,44 @@ public:
 	compchem::Matrix<double> &read2dFile(int n, const char *filename) {
 		FILE *fp = fopen(filename, "r");
 
-		compchem::Matrix<double> *out = new compchem::Matrix<double>({n, n});
+		compchem::Matrix<double> *out = new compchem::Matrix<double>( {n, n});
 
 		while(!feof(fp)) {
-				double a = 0, b = 0, c = 0;
-				fscanf(fp, "%lf %lf %lf", &a, &b, &c);
-				out->setEntry(c, (int) a - 1, (int) b - 1);
+			double a = 0, b = 0, c = 0;
+			fscanf(fp, "%lf %lf %lf", &a, &b, &c);
+			out->setEntry(c, (int) a - 1, (int) b - 1);
 		}
 		fclose(fp);
 		return (*out);
 	}
 
 	compchem::Matrix<double> &read2dSymmFile(int n, const char *filename) {
-			FILE *fp = fopen(filename, "r");
-
-			compchem::Matrix<double> *out = new compchem::Matrix<double>({n, n});
-
-			while(!feof(fp)) {
-					double a = 1, b = 1, c = 0;
-					fscanf(fp, "%lf %lf %lf", &a, &b, &c);
-					out->setEntry(c, (int) a - 1, (int) b - 1);
-					out->setEntry(c, (int) b - 1, (int) a - 1);
-			}
-			fclose(fp);
-			return (*out);
-		}
-
-	compchem::strategies::TEIMatrix<double> &read4dFile(int n, const char *filename) {
 		FILE *fp = fopen(filename, "r");
 
-		compchem::strategies::TEIMatrix<double> *out = new compchem::strategies::TEIMatrix<double>(n);
+		compchem::Matrix<double> *out = new compchem::Matrix<double>( {n, n});
+
+		while(!feof(fp)) {
+			double a = 1, b = 1, c = 0;
+			fscanf(fp, "%lf %lf %lf", &a, &b, &c);
+			out->setEntry(c, (int) a - 1, (int) b - 1);
+			out->setEntry(c, (int) b - 1, (int) a - 1);
+		}
+		fclose(fp);
+		return (*out);
+	}
+
+	compchem::strategies::TEIMatrix<double> &read4dFile(int n,
+	        const char *filename) {
+		FILE *fp = fopen(filename, "r");
+
+		compchem::strategies::TEIMatrix<double> *out =
+		        new compchem::strategies::TEIMatrix<double>(n);
 
 		while(!feof(fp)) {
 			double a = 0, b = 0, c = 0, d = 0, e = 0;
 			fscanf(fp, "%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e);
-			out->setEntry(e, (int) a - 1, (int) b - 1, (int) c - 1, (int) d - 1);
+			out->setEntry(e, (int) a - 1, (int) b - 1, (int) c - 1,
+			        (int) d - 1);
 		}
 		fclose(fp);
 		return (*out);
@@ -150,11 +159,18 @@ public:
 		wfn->setEnuc(readValueFile("enuc"));
 		wfn->setTEI(&read4dFile(wfn->getSize(), "eri"));
 
-		compchem::Matrix<double> *hamiltonian = (compchem::Matrix<double> *)&scf->findHamiltonian(*wfn), *fock, *c, *eigs;
-		scf->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock, (compchem::AbstractMatrix<double> **) &c,
-				nullptr, (compchem::AbstractMatrix<double> **) &eigs, nullptr);
+		compchem::Matrix<double> *hamiltonian =
+		        (compchem::Matrix<double> *) &scf->findHamiltonian(*wfn), *fock,
+		        *c, *eigs;
+		scf->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock,
+		        (compchem::AbstractMatrix<double> **) &c, nullptr,
+		        (compchem::AbstractMatrix<double> **) &eigs, nullptr);
 
-		double ccsd_energy = strat->CCSDEnergy(*c, *fock, wfn->two_electron(), *eigs, *hamiltonian, mol->nelectron());
+		delete hamiltonian;
+		hamiltonian = (compchem::Matrix<double> *) &scf->findHamiltonian(*wfn);
+
+		double ccsd_energy = strat->CCSDEnergy(*c, *fock, wfn->two_electron(),
+		        *eigs, *hamiltonian, mol->nelectron());
 
 		compareValue(ccsd_energy, "ccsd_energy");
 
@@ -167,13 +183,13 @@ public:
 
 };
 
-
 int main(void) {
 	if(chdir("./data/energies") == -1) {
 		chdir("./Test/data/energies");
 	}
 
-	CCSDTest<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water"), sto3g_methane("sto3g-methane");
+	CCSDTest<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water"),
+	        sto3g_methane("sto3g-methane");
 	CCSDTest<compchem::strategies::DZBasisSet> dz_water("dz-water");
 
 	sto3g_water.runTest();

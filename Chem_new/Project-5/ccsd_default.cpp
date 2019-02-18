@@ -16,59 +16,60 @@ static compchem::Matrix<double> &calculateSOTEI(
 	        {2 * tei.getShape(0), 2 * tei.getShape(0), 2 * tei.getShape(0), 2
 	                * tei.getShape(0)}), *motei =
 	        new compchem::Matrix<double>(
-	                {tei.getShape(0), tei.getShape(0), tei.getShape(0),
-	                        tei.getShape(0)});
+	                {tei.getShape(0), tei.getShape(0), tei.getShape(0), tei
+	                        .getShape(0)});
 
 	//Copy-paste from MP2 code, which works.
-	for(int p = 0; p < tei.getShape(0); p++) {
-		for(int q = 0; q < tei.getShape(0); q++) {
-			for(int r = 0; r < tei.getShape(0); r++) {
-				for(int s = 0; s < tei.getShape(0); s++) {
-					double sum = 0;
-					for(int mu = 0; mu < tei.getShape(0); mu++) {
-						double sum1 = 0;
-						for(int nu = 0; nu < tei.getShape(0); nu++) {
-							double sum2 = 0;
-							for(int lam = 0; lam < tei.getShape(0); lam++) {
-								double sum3 = 0;
-								for(int sig = 0; sig < tei.getShape(0); sig++) {
-									sum3 += orbs.getEntry(sig, s)
-									        * tei.getEntry(mu, nu, lam, sig);
-								}
-								sum2 += orbs.getEntry(lam, r) * sum3;
-							}
-							sum1 += orbs.getEntry(nu, q) * sum2;
-						}
-						sum += orbs.getEntry(mu, p) * sum1;
-					}
-					motei->setEntry(sum, p, q, r, s);
-				}
-			}
-		}
-	}
-	//This is probably the problem code.
+//	for(int p = 0; p < tei.getShape(0); p++) {
+//		for(int q = 0; q < tei.getShape(0); q++) {
+//			for(int r = 0; r < tei.getShape(0); r++) {
+//				for(int s = 0; s < tei.getShape(0); s++) {
+//					double sum = 0;
+//					for(int mu = 0; mu < tei.getShape(0); mu++) {
+//						double sum1 = 0;
+//						for(int nu = 0; nu < tei.getShape(0); nu++) {
+//							double sum2 = 0;
+//							for(int lam = 0; lam < tei.getShape(0); lam++) {
+//								double sum3 = 0;
+//								for(int sig = 0; sig < tei.getShape(0); sig++) {
+//									sum3 += orbs.getEntry(sig, s)
+//									        * tei.getEntry(mu, nu, lam, sig);
+//								}
+//								sum2 += orbs.getEntry(lam, r) * sum3;
+//							}
+//							sum1 += orbs.getEntry(nu, q) * sum2;
+//						}
+//						sum += orbs.getEntry(mu, p) * sum1;
+//					}
+//					motei->setEntry(sum, p, q, r, s);
+//				}
+//			}
+//		}
+//	}
+	//This is probably not the problem code.
 	for(int p = 0; p < 2 * tei.getShape(0); p++) {
 		for(int q = 0; q < 2 * tei.getShape(0); q++) {
 			for(int r = 0; r < 2 * tei.getShape(0); r++) {
 				for(int s = 0; s < 2 * tei.getShape(0); s++) {
 					out->setEntry(
-					        tei.getEntry(p / 2, r / 2, q / 2, s / 2)
+					        motei->getEntry(p / 2, r / 2, q / 2, s / 2)
 					                * ((p % 2 == r % 2)? 1: 0)
 					                * ((q % 2 == s % 2)? 1: 0)
-					                - tei.getEntry(p / 2, s / 2, q / 2,
+					                - motei->getEntry(p / 2, s / 2, q / 2,
 					                        r / 2) * ((p % 2 == s % 2)? 1: 0)
-					                        * ((q % 2 == r % 2)? 1: 0), p, q,
-					        r, s);
+					                        * ((q % 2 == r % 2)? 1: 0), p, q, r,
+					        s);
 				}
 			}
 		}
 	}
+
 	delete motei;
 	return (*out);
 }
 
 /*
- * This seems to produce the right matrix. It is diagonal to within a strong accuracy.
+ * This seems to produce the right matrix from the Fock. It is diagonal to within a strong accuracy.
  */
 static compchem::Matrix<double> &calculateSOFock(
         const compchem::AbstractMatrix<double> &fock,
@@ -80,8 +81,9 @@ static compchem::Matrix<double> &calculateSOFock(
 	        {2 * fock.getShape(0), 2 * fock.getShape(0)}), *mofock =
 	        new compchem::Matrix<double>( {fock.getShape(0), fock.getShape(0)}),
 	        *moham = new compchem::Matrix<double>(
-	                {fock.getShape(0), fock.getShape(0)}),
-	                *mofock_test = new compchem::Matrix<double>({2 * fock.getShape(0), 2 * fock.getShape(0)});
+	                {fock.getShape(0), fock.getShape(0)}), *mofock_test =
+	                new compchem::Matrix<double>(
+	                        {2 * fock.getShape(0), 2 * fock.getShape(0)});
 
 	//Test the two-electron integrals, spin basis.
 	//Generate the mo-basis hamiltonian.
@@ -101,11 +103,12 @@ static compchem::Matrix<double> &calculateSOFock(
 	//Generate the test fock matrix.
 	for(int p = 0; p < 2 * fock.getShape(0); p++) {
 		for(int q = 0; q < 2 * fock.getShape(0); q++) {
-			double sum1 = hamiltonian.getEntry(p / 2, q / 2) * ((p % 2 == q % 2)? 1: 0);
+			double sum1 = 0;
 			for(int k = 0; k < occupied; k++) {
 				sum1 += sotei.getEntry(p, k, q, k);
 			}
-			mofock_test->setEntry(sum1, p, q);
+			mofock_test->setEntry(moham->getEntry(p / 2, q / 2)
+			        * ((p % 2 == q % 2)? 1: 0) + sum1, p, q);
 		}
 	}
 
@@ -119,7 +122,11 @@ static compchem::Matrix<double> &calculateSOFock(
 				}
 				sum1 += orbs.getEntry(k, i) * sum2;
 			}
-			mofock->setEntry(sum1, i, j);
+			if(fabs(sum1) < 0.000000000000001) {
+				mofock->setEntry(0, i, j);
+			} else {
+				mofock->setEntry(sum1, i, j);
+			}
 		}
 	}
 
@@ -521,7 +528,8 @@ double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
 
 	double energy = 0, energy_prev = 1;
 	sotei = &calculateSOTEI(teri, orbitals, nelectrons);
-	sofock = &calculateSOFock(fock, orbitals, energies, hamiltonian, *sotei, nelectrons);
+	sofock = &calculateSOFock(fock, orbitals, energies, hamiltonian, *sotei,
+	        nelectrons);
 
 	for(int i = 0; i < nelectrons; i++) {
 		for(int a = nelectrons; a < sofock->getShape(0); a++) {
@@ -529,7 +537,7 @@ double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
 		}
 	}
 
-	//This could be problem code.
+	//This is not the problem.
 	for(int i = 0; i < nelectrons; i++) {
 		for(int j = 0; j < nelectrons; j++) {
 			for(int a = nelectrons; a < sofock->getShape(0); a++) {
@@ -557,6 +565,9 @@ double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
 					}
 					sum += sotei->getEntry(i, j, a, b)
 					        * t2->getEntry(i, j, a, b) / 4;
+					if(compchem::compareDoubles(sum, -0.049149636120, 0.001) == 0) {
+						printf("Found! %d %d %d %d\n", i, j, a, b);
+					}
 				}
 			}
 		}
