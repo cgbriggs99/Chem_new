@@ -13,7 +13,7 @@
 namespace compchem {
 namespace strategies {
 
-class DefaultCCSDCorrection: public AbstractCCSDCorrection {
+class DefaultCCSDCorrection : public AbstractCCSDCorrection {
 public:
 	DefaultCCSDCorrection() {
 		;
@@ -24,11 +24,11 @@ public:
 	}
 
 	double CCSDEnergy(const compchem::AbstractMatrix<double> &orbitals,
-			const compchem::AbstractMatrix<double> &fock,
-			const compchem::AbstractMatrix<double> &teri,
-			const compchem::AbstractMatrix<double> &energies, const compchem::AbstractMatrix<double> &hamiltonian,
-			int nelectrons)
-					override;
+	        const compchem::AbstractMatrix<double> &fock,
+	        const compchem::AbstractMatrix<double> &teri,
+	        const compchem::AbstractMatrix<double> &energies, int nelectrons,
+	        compchem::AbstractMatrix<double> **t1_amps,
+	        compchem::AbstractMatrix<double> **t2_amps) override;
 };
 
 }
