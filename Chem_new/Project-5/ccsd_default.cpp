@@ -575,6 +575,22 @@ double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
 		}
 		energy = sum1 + sum2 + sum3;
 	}
+
+	if(t1_amps != nullptr) {
+		*t1_amps = t1;
+	} else {
+		delete t1;
+	}
+
+	if(t2_amps != nullptr) {
+		*t2_amps = t2;
+	}
+
+	delete f;
+	delete w;
+	delete hold1;
+	delete hold2;
+
 	return (energy);
 }
 

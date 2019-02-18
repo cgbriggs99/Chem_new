@@ -175,7 +175,7 @@ public:
 		hamiltonian = (compchem::Matrix<double> *) &scf->findHamiltonian(*wfn);
 
 		double ccsd_energy = strat->CCSDEnergy(*c, *fock, wfn->two_electron(),
-		        *eigs, *hamiltonian, mol->nelectron());
+		        *eigs, mol->nelectron(), nullptr, nullptr);
 
 		compareValue(ccsd_energy, "ccsd_energy");
 
