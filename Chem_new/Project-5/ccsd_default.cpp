@@ -8,7 +8,6 @@
 #include "ccsd_default.hpp"
 #include <cmath>
 
-//This is probably not producing the right tensor.
 static compchem::Matrix<double> &calculateSOTEI(
         const compchem::AbstractMatrix<double> &tei,
         const compchem::AbstractMatrix<double> &orbs, int occupied) {
@@ -16,10 +15,9 @@ static compchem::Matrix<double> &calculateSOTEI(
 	        {2 * tei.getShape(0), 2 * tei.getShape(0), 2 * tei.getShape(0), 2
 	                * tei.getShape(0)}), *motei =
 	        new compchem::Matrix<double>(
-	                {tei.getShape(0), tei.getShape(0), tei.getShape(0),
-	                        tei.getShape(0)});
+	                {tei.getShape(0), tei.getShape(0), tei.getShape(0), tei
+	                        .getShape(0)});
 
-	//Copy-paste from MP2 code, which works.
 	for(int p = 0; p < tei.getShape(0); p++) {
 		for(int q = 0; q < tei.getShape(0); q++) {
 			for(int r = 0; r < tei.getShape(0); r++) {
@@ -46,68 +44,34 @@ static compchem::Matrix<double> &calculateSOTEI(
 			}
 		}
 	}
-	//This is probably the problem code.
+
 	for(int p = 0; p < 2 * tei.getShape(0); p++) {
 		for(int q = 0; q < 2 * tei.getShape(0); q++) {
 			for(int r = 0; r < 2 * tei.getShape(0); r++) {
 				for(int s = 0; s < 2 * tei.getShape(0); s++) {
 					out->setEntry(
-					        tei.getEntry(p / 2, r / 2, q / 2, s / 2)
+					        motei->getEntry(p / 2, r / 2, q / 2, s / 2)
 					                * ((p % 2 == r % 2)? 1: 0)
 					                * ((q % 2 == s % 2)? 1: 0)
-					                - tei.getEntry(p / 2, s / 2, q / 2,
+					                - motei->getEntry(p / 2, s / 2, q / 2,
 					                        r / 2) * ((p % 2 == s % 2)? 1: 0)
-					                        * ((q % 2 == r % 2)? 1: 0), p, q,
-					        r, s);
+					                        * ((q % 2 == r % 2)? 1: 0), p, q, r,
+					        s);
 				}
 			}
 		}
 	}
+
 	delete motei;
 	return (*out);
 }
 
-/*
- * This seems to produce the right matrix. It is diagonal to within a strong accuracy.
- */
 static compchem::Matrix<double> &calculateSOFock(
         const compchem::AbstractMatrix<double> &fock,
-        const compchem::AbstractMatrix<double> &orbs,
-        const compchem::AbstractMatrix<double> &energies,
-        const compchem::AbstractMatrix<double> &hamiltonian,
-        const compchem::AbstractMatrix<double> &sotei, int occupied) {
+        const compchem::AbstractMatrix<double> &orbs) {
 	compchem::Matrix<double> *out = new compchem::Matrix<double>(
 	        {2 * fock.getShape(0), 2 * fock.getShape(0)}), *mofock =
-	        new compchem::Matrix<double>( {fock.getShape(0), fock.getShape(0)}),
-	        *moham = new compchem::Matrix<double>(
-	                {fock.getShape(0), fock.getShape(0)}),
-	                *mofock_test = new compchem::Matrix<double>({2 * fock.getShape(0), 2 * fock.getShape(0)});
-
-	//Test the two-electron integrals, spin basis.
-	//Generate the mo-basis hamiltonian.
-	for(int i = 0; i < fock.getShape(0); i++) {
-		for(int j = 0; j < fock.getShape(0); j++) {
-			double sum1 = 0;
-			for(int k = 0; k < fock.getShape(0); k++) {
-				double sum2 = 0;
-				for(int l = 0; l < fock.getShape(0); l++) {
-					sum2 += orbs.getEntry(l, j) * hamiltonian.getEntry(k, l);
-				}
-				sum1 += orbs.getEntry(k, i) * sum2;
-			}
-			moham->setEntry(sum1, i, j);
-		}
-	}
-	//Generate the test fock matrix.
-	for(int p = 0; p < 2 * fock.getShape(0); p++) {
-		for(int q = 0; q < 2 * fock.getShape(0); q++) {
-			double sum1 = hamiltonian.getEntry(p / 2, q / 2) * ((p % 2 == q % 2)? 1: 0);
-			for(int k = 0; k < occupied; k++) {
-				sum1 += sotei.getEntry(p, k, q, k);
-			}
-			mofock_test->setEntry(sum1, p, q);
-		}
-	}
+	        new compchem::Matrix<double>( {fock.getShape(0), fock.getShape(0)});
 
 	for(int i = 0; i < fock.getShape(0); i++) {
 		for(int j = 0; j < fock.getShape(0); j++) {
@@ -119,7 +83,11 @@ static compchem::Matrix<double> &calculateSOFock(
 				}
 				sum1 += orbs.getEntry(k, i) * sum2;
 			}
-			mofock->setEntry(sum1, i, j);
+			if(fabs(sum1) < 0.000000000000001) {
+				mofock->setEntry(0, i, j);
+			} else {
+				mofock->setEntry(sum1, i, j);
+			}
 		}
 	}
 
@@ -497,12 +465,10 @@ static void calculateT2(const compchem::AbstractMatrix<double> &sofock,
 	}
 }
 
-double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
+double compchem::strategies::DefaultCCSDCorrection::CCEnergy(
         const compchem::AbstractMatrix<double> &orbitals,
         const compchem::AbstractMatrix<double> &fock,
-        const compchem::AbstractMatrix<double> &teri,
-        const compchem::AbstractMatrix<double> &energies,
-        const compchem::AbstractMatrix<double> &hamiltonian, int nelectrons) {
+        const compchem::AbstractMatrix<double> &teri, int nelectrons) {
 	compchem::Matrix<double> *sotei, *sofock, *f = new compchem::Matrix<double>(
 	        {2 * fock.getShape(0), 2 * fock.getShape(0)}), *w =
 	        new compchem::Matrix<double>(
@@ -521,7 +487,7 @@ double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
 
 	double energy = 0, energy_prev = 1;
 	sotei = &calculateSOTEI(teri, orbitals, nelectrons);
-	sofock = &calculateSOFock(fock, orbitals, energies, hamiltonian, *sotei, nelectrons);
+	sofock = &calculateSOFock(fock, orbitals);
 
 	for(int i = 0; i < nelectrons; i++) {
 		for(int a = nelectrons; a < sofock->getShape(0); a++) {
@@ -529,7 +495,6 @@ double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
 		}
 	}
 
-	//This could be problem code.
 	for(int i = 0; i < nelectrons; i++) {
 		for(int j = 0; j < nelectrons; j++) {
 			for(int a = nelectrons; a < sofock->getShape(0); a++) {
@@ -552,19 +517,13 @@ double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
 		for(int j = 0; j < nelectrons; j++) {
 			for(int a = nelectrons; a < sofock->getShape(0); a++) {
 				for(int b = nelectrons; b < sofock->getShape(0); b++) {
-					if(std::isnan(t2->getEntry(i, j, a, b))) {
-						throw(new std::exception());
-					}
 					sum += sotei->getEntry(i, j, a, b)
-					        * t2->getEntry(i, j, a, b) / 4;
+					        * t2->getEntry(i, j, a, b);
 				}
 			}
 		}
 	}
-	energy = sum;
-	if(compchem::compareDoubles(sum, -0.049149636120, 0.001) != 0) {
-		throw(new std::exception());
-	}
+	energy = sum / 4;
 
 	while(fabs(energy - energy_prev) > 0.000001) {
 		energy_prev = energy;
@@ -612,6 +571,16 @@ double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
 		}
 		energy = sum1 + sum2 + sum3;
 	}
+
+	delete f;
+	delete w;
+	delete hold1;
+	delete hold2;
+	delete t1;
+	delete t2;
+	delete sofock;
+	delete sotei;
+
 	return (energy);
 }
 

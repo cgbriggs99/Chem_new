@@ -22,28 +22,32 @@ compchem::strategies::DiskAllocator<_T>::DiskAllocator() {
 
 template<typename _T>
 compchem::strategies::DiskAllocator<_T>::~DiskAllocator() {
-	for(std::pair<pointer, size_t> &pair : this->regions) {
-		VirtualFree(pair.first, pair.second, MEM_RELEASE);
+	for(std::pair<const pointer, size_t> &pair : this->regions) {
+		VirtualFree(pair.first, 0, MEM_RELEASE);
 	}
 }
 
 template<typename _T>
-compchem::strategies::DiskAllocator<_T>::pointer compchem::strategies::DiskAllocator<_T>::allocate(size_t n_elems) {
+typename compchem::strategies::DiskAllocator<_T>::pointer compchem::strategies::DiskAllocator<
+        _T>::allocate(size_t n_elems) {
 	size_t size = n_elems * sizeof(_T);
-	pointer ptr = VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+	pointer ptr = (pointer) VirtualAlloc(nullptr, size, MEM_RESERVE | MEM_COMMIT,
+	    PAGE_READWRITE);
 	regions[ptr] = size;
+	return (ptr);
 }
 
 template<typename _T>
-void compchem::strategies::DiskAllocator<_T>::deallocate(pointer ptr, size_t n_elems) {
+void compchem::strategies::DiskAllocator<_T>::deallocate(pointer ptr,
+                                                         size_t n_elems) {
 	if(regions.find(ptr) == regions.end()) {
 		return;
 	}
 
-	if(n_elems * sizeof(_T) != regions[ptr].second) {
+	if(n_elems * sizeof(_T) != regions[ptr]) {
 		return;
 	}
-	VirtualFree(regions[ptr].first, regions[ptr].second);
+	VirtualFree((void *) ptr, 0, MEM_RELEASE);
 	regions.erase(ptr);
 }
 
@@ -69,7 +73,7 @@ compchem::strategies::DiskAllocator<_T>::~DiskAllocator() {
 
 template<typename _T>
 typename compchem::strategies::DiskAllocator<_T>::pointer compchem::strategies::DiskAllocator<
-        _T>::allocate(size_t n_elems) {
+_T>::allocate(size_t n_elems) {
 	size_t size = n_elems * sizeof(_T);
 
 	//Open the file in a temporary directory.
@@ -86,7 +90,7 @@ typename compchem::strategies::DiskAllocator<_T>::pointer compchem::strategies::
 
 	//Map the file into virtual memory.
 	pointer ptr = (pointer) mmap(NULL, size, PROT_READ | PROT_WRITE,
-	        MAP_SHARED | MAP_POPULATE, fd, 0);
+			MAP_SHARED | MAP_POPULATE, fd, 0);
 	//Add file details to the map.
 	files[ptr] = std::pair<int, size_t>(fd, size);
 	return (ptr);
@@ -94,7 +98,7 @@ typename compchem::strategies::DiskAllocator<_T>::pointer compchem::strategies::
 
 template<typename _T>
 void compchem::strategies::DiskAllocator<_T>::deallocate(pointer ptr,
-        size_t n_elems) {
+		size_t n_elems) {
 	if(files.find(ptr) == files.end()) {
 		return;
 	}

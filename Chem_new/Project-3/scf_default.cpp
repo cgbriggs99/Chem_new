@@ -139,12 +139,12 @@ void compchem::strategies::DefaultSCFStrategy<_E, _M>::runSCF(const compchem::Ab
 	if(mo_fock != nullptr) {
 		*mo_fock = fock_ao;
 	} else {
-		delete fock_ao;
+		delete fock;
 	}
 	if(lcaomo != nullptr) {
-		*lcaomo = c_prime;
+		*lcaomo = c;
 	} else {
-		delete c_prime;
+		delete c;
 	}
 	if(density != nullptr) {
 		*density = dens;
@@ -152,15 +152,16 @@ void compchem::strategies::DefaultSCFStrategy<_E, _M>::runSCF(const compchem::Ab
 		delete dens;
 	}
 	if(_eigs != nullptr) {
-		*_eigs = &eigs->eigenvals(*fock);
+		*_eigs = eout;
+	} else {
+		delete eout;
 	}
-	delete eout;
 	delete s_half;
 	delete s_half_t;
 	delete fock;
 	delete hamiltonian;
-	if(c != nullptr)
-		delete c;
+	if(c_prime != nullptr)
+		delete c_prime;
 	if(last_dens != nullptr) {
 		delete last_dens;
 	}

@@ -1,46 +1,51 @@
 /*
- * scf_test.cpp
+ * ccsdt_test.cpp
  *
- *  Created on: Feb 4, 2019
- *      Author: Connor
+ *  Created on: Feb 18, 2019
+ *      Author: cgbri
  */
 
+
+
 #include "test.hpp"
-#include "../Project-8/diis_scf.hpp"
-#include "../Base/matrix_tei.hpp"
-#include "../Base/math.hpp"
+#include "../Project-3/scf_default.hpp"
+#include "../Project-5/ccsd_default.hpp"
 #include "../Base/base.hpp"
 #include "../Molecule/molecule_default.hpp"
 #include "../Molecule/wavefunction_default.hpp"
 #include "../Molecule/sto3g_basis_set.hpp"
 #include "../Molecule/dz_basis_set.hpp"
+#include "../Project-6/ccsdt.hpp"
 #include <unistd.h>
 
 template<typename _T>
-class SCFTest : public test::Test {
+class CCSDTest : public test::Test {
 private:
-	compchem::SCFStrategy *strat;
+	compchem::AbstractCCCorrection *strat;
+	compchem::SCFStrategy *scf;
 	compchem::strategies::DefaultWavefunction<_T> *wfn;
 	compchem::AbstractMolecule *mol;
 	const char *dir;
 public:
-	SCFTest(const char *dir) {
-		strat =
-		        new compchem::strategies::SCF_DIISStrategy<
+	CCSDTest(const char *dir) {
+		strat = new compchem::strategies::DefaultCCSDTCorrection();
+		scf =
+		        new compchem::strategies::DefaultSCFStrategy<
 		                compchem::strategies::LapackEigenvalues<double>,
 		                compchem::strategies::DefaultMatrixArithmeticStrategy<
-		                        double> >();
+		                        double>>();
 		this->dir = dir;
 		wfn = nullptr;
 		mol = new compchem::strategies::DefaultMolecule();
 	}
 
-	~SCFTest() {
+	~CCSDTest() {
 		delete strat;
 		if(wfn != nullptr) {
 			delete wfn;
 		}
 		delete mol;
+		delete scf;
 	}
 
 	void compare2d(const compchem::Matrix<double> &mat, const char *filename) {
@@ -159,56 +164,46 @@ public:
 		wfn->setS(&read2dSymmFile(wfn->getSize(), "s"));
 		wfn->setT(&read2dSymmFile(wfn->getSize(), "t"));
 		wfn->setV(&read2dSymmFile(wfn->getSize(), "v"));
-		wfn->setMuX(&read2dSymmFile(wfn->getSize(), "mux"));
-		wfn->setMuY(&read2dSymmFile(wfn->getSize(), "muy"));
-		wfn->setMuZ(&read2dSymmFile(wfn->getSize(), "muz"));
-
 		wfn->setEnuc(readValueFile("enuc"));
 		wfn->setTEI(&read4dFile(wfn->getSize(), "eri"));
 
 		compchem::Matrix<double> *hamiltonian =
-		        (compchem::Matrix<double> *) &strat->findHamiltonian(*wfn);
-		compchem::Matrix<double> *fock, *c, *density;
+		        (compchem::Matrix<double> *) &scf->findHamiltonian(*wfn), *fock,
+		        *c, *eigs;
 		double energy;
-		strat->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock,
-		        (compchem::AbstractMatrix<double> **) &c,
-		        (compchem::AbstractMatrix<double> **) &density, nullptr,
-		        &energy);
-		std::vector<double> *charges = &strat->findElectronCharge(*mol, *wfn,
-		        *density);
-		std::array<double, 3> *moment = &strat->findDipole(*mol, *density,
-		        *wfn);
-
-		compare2d(*density, "density");
-		compareList(*charges, "charges");
-		compareValue(energy, "etotal");
-		compare2d(*hamiltonian, "hamiltonian");
-		compareList(std::vector<double>(moment->begin(), moment->end()),
-		        "moment");
+		scf->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock,
+		        (compchem::AbstractMatrix<double> **) &c, nullptr,
+		        (compchem::AbstractMatrix<double> **) &eigs, &energy);
 
 		delete hamiltonian;
+		hamiltonian = (compchem::Matrix<double> *) &scf->findHamiltonian(*wfn);
+
+		double ccsdt_energy = strat->CCEnergy(*c, *fock, wfn->two_electron(), mol->nelectron());
+
+		compareValue(ccsdt_energy + energy, "ccsdt_energy");
+
+		delete eigs;
 		delete fock;
 		delete c;
-		delete density;
-		delete charges;
-		delete moment;
+		delete hamiltonian;
 		chdir("../");
 	}
 
 };
 
 int main(void) {
-	if(chdir("./data/scf") == -1) {
-		chdir("./Test/data/scf");
+	if(chdir("./data/energies") == -1) {
+		chdir("./Test/data/energies");
 	}
 
-	SCFTest<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water");
-	sto3g_water.runTest();
-	SCFTest<compchem::strategies::STO3GBasisSet> sto3g_methane("sto3g-methane");
-	sto3g_methane.runTest();
-	SCFTest<compchem::strategies::DZBasisSet> dz_water("dz-water");
-	dz_water.runTest();
+	CCSDTest<compchem::strategies::STO3GBasisSet> sto3g_water("sto3g-water"),
+	        sto3g_methane("sto3g-methane");
+	CCSDTest<compchem::strategies::DZBasisSet> dz_water("dz-water");
 
+	sto3g_water.runTest();
+	dz_water.runTest();
+	sto3g_methane.runTest();
 	return (0);
 }
+
 
