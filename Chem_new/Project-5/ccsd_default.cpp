@@ -465,13 +465,10 @@ static void calculateT2(const compchem::AbstractMatrix<double> &sofock,
 	}
 }
 
-double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
+double compchem::strategies::DefaultCCSDCorrection::CCEnergy(
         const compchem::AbstractMatrix<double> &orbitals,
         const compchem::AbstractMatrix<double> &fock,
-        const compchem::AbstractMatrix<double> &teri,
-        const compchem::AbstractMatrix<double> &energies, int nelectrons,
-        compchem::AbstractMatrix<double> **t1_amps,
-        compchem::AbstractMatrix<double> **t2_amps) {
+        const compchem::AbstractMatrix<double> &teri, int nelectrons) {
 	compchem::Matrix<double> *sotei, *sofock, *f = new compchem::Matrix<double>(
 	        {2 * fock.getShape(0), 2 * fock.getShape(0)}), *w =
 	        new compchem::Matrix<double>(
@@ -576,20 +573,12 @@ double compchem::strategies::DefaultCCSDCorrection::CCSDEnergy(
 		energy = sum1 + sum2 + sum3;
 	}
 
-	if(t1_amps != nullptr) {
-		*t1_amps = t1;
-	} else {
-		delete t1;
-	}
-
-	if(t2_amps != nullptr) {
-		*t2_amps = t2;
-	}
-
 	delete f;
 	delete w;
 	delete hold1;
 	delete hold2;
+	delete t1;
+	delete t2;
 
 	return (energy);
 }

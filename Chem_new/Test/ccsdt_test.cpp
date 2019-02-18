@@ -1,9 +1,11 @@
 /*
- * scf_test.cpp
+ * ccsdt_test.cpp
  *
- *  Created on: Feb 4, 2019
- *      Author: Connor
+ *  Created on: Feb 18, 2019
+ *      Author: cgbri
  */
+
+
 
 #include "test.hpp"
 #include "../Project-3/scf_default.hpp"
@@ -13,6 +15,7 @@
 #include "../Molecule/wavefunction_default.hpp"
 #include "../Molecule/sto3g_basis_set.hpp"
 #include "../Molecule/dz_basis_set.hpp"
+#include "../Project-6/ccsdt.hpp"
 #include <unistd.h>
 
 template<typename _T>
@@ -25,7 +28,7 @@ private:
 	const char *dir;
 public:
 	CCSDTest(const char *dir) {
-		strat = new compchem::strategies::DefaultCCSDCorrection();
+		strat = new compchem::strategies::DefaultCCSDTCorrection();
 		scf =
 		        new compchem::strategies::DefaultSCFStrategy<
 		                compchem::strategies::LapackEigenvalues<double>,
@@ -167,17 +170,18 @@ public:
 		compchem::Matrix<double> *hamiltonian =
 		        (compchem::Matrix<double> *) &scf->findHamiltonian(*wfn), *fock,
 		        *c, *eigs;
+		double energy;
 		scf->runSCF(*wfn, (compchem::AbstractMatrix<double> **) &fock,
 		        (compchem::AbstractMatrix<double> **) &c, nullptr,
-		        (compchem::AbstractMatrix<double> **) &eigs, nullptr);
+		        (compchem::AbstractMatrix<double> **) &eigs, &energy);
 
 		delete hamiltonian;
 		hamiltonian = (compchem::Matrix<double> *) &scf->findHamiltonian(*wfn);
 
-		double ccsd_energy = strat->CCEnergy(*c, *fock, wfn->two_electron(),
-		        *eigs, mol->nelectron(), nullptr, nullptr);
+		double ccsdt_energy = strat->CCEnergy(*c, *fock, wfn->two_electron(),
+		        *eigs, mol->nelectron());
 
-		compareValue(ccsd_energy, "ccsd_energy");
+		compareValue(ccsdt_energy + energy, "ccsdt_energy");
 
 		delete eigs;
 		delete fock;
@@ -202,4 +206,5 @@ int main(void) {
 	sto3g_methane.runTest();
 	return (0);
 }
+
 
