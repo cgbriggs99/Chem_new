@@ -29,7 +29,7 @@ public:
 		        new compchem::strategies::SCF_DIISStrategy<
 		                compchem::strategies::LapackEigenvalues<double>,
 		                compchem::strategies::DefaultMatrixArithmeticStrategy<
-		                        double> >();
+		                        double>, 8>();
 		this->dir = dir;
 		wfn = nullptr;
 		mol = new compchem::strategies::DefaultMolecule();
