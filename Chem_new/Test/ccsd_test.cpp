@@ -6,6 +6,7 @@
  */
 
 #include "test.hpp"
+#include "../Project-8/diis_scf.hpp"
 #include "../Project-3/scf_default.hpp"
 #include "../Project-5/ccsd_default.hpp"
 #include "../Base/base.hpp"
@@ -30,7 +31,7 @@ public:
 		        new compchem::strategies::DefaultSCFStrategy<
 		                compchem::strategies::LapackEigenvalues<double>,
 		                compchem::strategies::DefaultMatrixArithmeticStrategy<
-		                        double>>();
+		                        double> >();
 		this->dir = dir;
 		wfn = nullptr;
 		mol = new compchem::strategies::DefaultMolecule();

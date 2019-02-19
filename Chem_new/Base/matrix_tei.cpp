@@ -11,6 +11,7 @@
 #include "matrix_tei.hpp"
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
 static int tei_index(int a, int b, int c, int d) {
 	int ab, cd;
@@ -35,9 +36,12 @@ static int tei_index(int a, int b, int c, int d) {
 
 template<typename _T, typename _Alloc>
 compchem::strategies::TEIMatrix<_T, _Alloc>::TEIMatrix(int n) {
-	this->data = this->allocator.allocate(tei_index(n, n, n, n));
+	int s = tei_index(n, n, n, n);
+	this->data = this->allocator.allocate(s);
 	this->n = n;
 	this->size = n * n * n * n;
+	memset(this->data, 0, s * sizeof(_T));
+
 }
 
 template<typename _T, typename _Alloc>

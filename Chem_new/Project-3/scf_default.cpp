@@ -25,7 +25,7 @@ compchem::AbstractMatrix<double> &compchem::strategies::DefaultSCFStrategy<_E, _
 
 template<typename _E, typename _M>
 void compchem::strategies::DefaultSCFStrategy<_E, _M>::runSCF(const compchem::AbstractWavefunction &wf, compchem::AbstractMatrix<double> **mo_fock,
-		compchem::AbstractMatrix<double> **lcaomo, compchem::AbstractMatrix<double> **density, \
+		compchem::AbstractMatrix<double> **lcaomo, compchem::AbstractMatrix<double> **density,
 		compchem::AbstractMatrix<double> **_eigs, double *energy) {
 
 	compchem::Matrix<double> *s_half, *s_half_t, *fock = nullptr, *fock_ao, *c_prime = nullptr, *c = nullptr, *dens = nullptr,
@@ -131,6 +131,9 @@ void compchem::strategies::DefaultSCFStrategy<_E, _M>::runSCF(const compchem::Ab
 						sum += dens->getEntry(k, l) * (2 * wf.two_electron().getEntry(i, j, k, l) - wf.two_electron().getEntry(i, k, j, l));
 					}
 				}
+				if(sum > 100) {
+					;
+				}
 				fock_ao->setEntry(sum, i, j);
 			}
 		}
@@ -139,7 +142,7 @@ void compchem::strategies::DefaultSCFStrategy<_E, _M>::runSCF(const compchem::Ab
 	if(mo_fock != nullptr) {
 		*mo_fock = fock_ao;
 	} else {
-		delete fock;
+		delete fock_ao;
 	}
 	if(lcaomo != nullptr) {
 		*lcaomo = c;

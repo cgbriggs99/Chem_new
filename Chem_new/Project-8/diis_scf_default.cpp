@@ -13,21 +13,21 @@
 
 template<typename _T, typename _U, int _max_depth>
 void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
-        const compchem::AbstractWavefunction &wf,
-        compchem::AbstractMatrix<double> **mo_fock,
-        compchem::AbstractMatrix<double> **lcaomo,
-        compchem::AbstractMatrix<double> **density,
-        compchem::AbstractMatrix<double> **_eigs, double *energy) {
+		const compchem::AbstractWavefunction &wf,
+		compchem::AbstractMatrix<double> **mo_fock,
+		compchem::AbstractMatrix<double> **lcaomo,
+		compchem::AbstractMatrix<double> **density,
+		compchem::AbstractMatrix<double> **_eigs, double *energy) {
 
 	compchem::Matrix<double> *errmats[_max_depth] = {nullptr}, *fockmats[_max_depth] = {nullptr};
 	int pos = 0;
 	int size = 0;
 
 	compchem::Matrix<double> *s_half, *s_half_t, *fock = nullptr, *fock_ao,
-	        *c_prime = nullptr, *c = nullptr, *dens = nullptr, *last_dens =
-	                nullptr, *work1, *work2, *work3, *work4, *eout = nullptr;
+	*c_prime = nullptr, *c = nullptr, *dens = nullptr, *last_dens =
+	nullptr, *work1, *work2, *work3, *work4, *eout = nullptr;
 	compchem::Matrix<double> *hamiltonian =
-	        (compchem::Matrix<double> *) &this->findHamiltonian(wf);
+	(compchem::Matrix<double> *) &this->findHamiltonian(wf);
 	double etotal = 0, etot_last = 1, rms = 0, rms_last = 1;
 
 	/*
@@ -57,7 +57,7 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 	fock_ao = (compchem::Matrix<double> *) &this->findHamiltonian(wf);
 
 	while(fabs(etotal - etot_last) > 0.000000001
-	    || fabs(rms - rms_last) > 0.000001) {
+			|| fabs(rms - rms_last) > 0.000001) {
 		if(last_dens != nullptr) {
 			delete last_dens;
 		}
@@ -89,7 +89,6 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 			work2 = nullptr;
 			work3 = nullptr;
 
-
 			if(errmats[pos] != nullptr) {
 				delete errmats[pos];
 			} else {
@@ -108,9 +107,9 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 
 			//Build new minimization array.
 			work1 = new compchem::Matrix<double>(
-			    { size + 1, size + 1 });
+					{	size + 1, size + 1});
 			work1->setEntry(0, size, size);
-			work2 = new compchem::Matrix<double>( { size + 1, 1 });
+			work2 = new compchem::Matrix<double>( {size + 1, 1});
 
 			for(int i = 0; i < size; i++) {
 				for(int j = 0; j <= i; j++) {
@@ -139,7 +138,7 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 			delete work1;
 
 			work1 = new compchem::Matrix<double>(
-			    { wf.getSize(), wf.getSize() });
+					{	wf.getSize(), wf.getSize()});
 
 			for(int i = 0; i < wf.getSize(); i++) {
 				for(int j = 0; j < wf.getSize(); j++) {
@@ -148,7 +147,7 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 			}
 			for(int i = 0; i < size; i++) {
 				work3 = (compchem::Matrix<double> *) &this->matarit->mult(
-				    *fockmats[i], work2->getEntry(i, 0));
+						*fockmats[i], work2->getEntry(i, 0));
 				work4 = (compchem::Matrix<double> *) &this->matarit->add(*work1, *work3);
 				delete work1;
 				delete work3;
@@ -171,7 +170,7 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 
 		//Find mo Fock matrix
 		work1 = (compchem::Matrix<double> *) &this->matarit->mult(*s_half_t,
-		    *fock_ao);
+				*fock_ao);
 
 		fock = (compchem::Matrix<double> *) &this->matarit->mult(*work1, *s_half);
 		delete work1;
@@ -183,7 +182,7 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 		c = (compchem::Matrix<double> *) &this->matarit->mult(*s_half, *c_prime);
 
 		//Calculate the density
-		dens = new compchem::Matrix<double>( { wf.getSize(), wf.getSize() });
+		dens = new compchem::Matrix<double>( {wf.getSize(), wf.getSize()});
 		for(int i = 0; i < wf.getSize(); i++) {
 			for(int j = 0; j < wf.getSize(); j++) {
 				double sum = 0;
@@ -199,7 +198,7 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 		for(int i = 0; i < wf.getSize(); i++) {
 			for(int j = 0; j < wf.getSize(); j++) {
 				etotal += dens->getEntry(i, j)
-				    * (hamiltonian->getEntry(i, j) + fock_ao->getEntry(i, j));
+				* (hamiltonian->getEntry(i, j) + fock_ao->getEntry(i, j));
 			}
 		}
 
@@ -221,8 +220,8 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 				for(int k = 0; k < wf.getSize(); k++) {
 					for(int l = 0; l < wf.getSize(); l++) {
 						sum += dens->getEntry(k, l)
-						    * (2 * wf.two_electron().getEntry(i, j, k, l)
-						        - wf.two_electron().getEntry(i, k, j, l));
+						* (2 * wf.two_electron().getEntry(i, j, k, l)
+								- wf.two_electron().getEntry(i, k, j, l));
 					}
 				}
 				fock_ao->setEntry(sum, i, j);
@@ -234,6 +233,10 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 	for(int i = 0; i < size; i++) {
 		delete fockmats[i];
 		delete errmats[i];
+	}
+
+	if(energy != nullptr) {
+		*energy = etotal;
 	}
 
 	if(mo_fock != nullptr) {
@@ -264,10 +267,6 @@ void compchem::strategies::SCF_DIISStrategy<_T, _U, _max_depth>::runSCF(
 	if(last_dens != nullptr) {
 		delete last_dens;
 	}
-	if(energy != nullptr) {
-		*energy = etotal;
-	}
-
 }
 
 #endif

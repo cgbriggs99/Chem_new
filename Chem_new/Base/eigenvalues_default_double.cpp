@@ -12,6 +12,16 @@
 #include <exception>
 #include <stdexcept>
 
+static int compare(const void *a, const void *b) {
+	if(*((double *) a) > *((double *) b)) {
+		return (1);
+	} else if(*((double *) a) < *((double *) b)) {
+		return (-1);
+	} else {
+		return (0);
+	}
+}
+
 template<>
 compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigenvals(
 		const compchem::AbstractMatrix<double> &mat) {
@@ -28,6 +38,7 @@ compchem::Matrix<double> &compchem::strategies::LapackEigenvalues<double>::eigen
 			mat.getShape(1));
 	free(work);
 	free(temp);
+	qsort(out, mat.getShape(0), sizeof(double), compare);
 
 	if (info != 0) {
 		printf("Error %d\n", info);
@@ -107,6 +118,7 @@ void compchem::strategies::LapackEigenvalues<double>::eigen_all(
 			mat.getShape(1));
 	free(work);
 
+	//Sort values and vectors.
 	for(int i = 0; i < mat.getShape(0) - 1; i++) {
 		int max_ind = i;
 		for(int j = i; j < mat.getShape(0); j++) {
