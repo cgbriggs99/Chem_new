@@ -8,7 +8,7 @@
 #ifndef BASE_EIGENVALUES_HPP_
 #define BASE_EIGENVALUES_HPP_
 
-#include "matrix.hpp"
+#include "matrix_default.hpp"
 
 namespace compchem {
 
@@ -17,10 +17,10 @@ class EigenvalueStrategy {
 public:
 	virtual ~EigenvalueStrategy() = default;
 
-	virtual Matrix<T> &eigenvals(const Matrix<T> &mat) = 0;
-	virtual Matrix<T> &eigenvecs_left(const Matrix<T> &mat) = 0;
-	virtual Matrix<T> &eigenvecs_right(const Matrix<T> &mat) = 0;
-	virtual void eigen_all(const Matrix<T> &mat, Matrix<T> *&evals, Matrix<T> *&rvecs, Matrix<T> *&lvecs) = 0;
+	virtual Matrix<T> &eigenvals(const AbstractMatrix<T> &mat) = 0;
+	virtual Matrix<T> &eigenvecs_left(const AbstractMatrix<T> &mat) = 0;
+	virtual Matrix<T> &eigenvecs_right(const AbstractMatrix<T> &mat) = 0;
+	virtual void eigen_all(const AbstractMatrix<T> &mat, Matrix<T> **evals, Matrix<T> **rvecs, Matrix<T> **lvecs) = 0;
 };
 
 }

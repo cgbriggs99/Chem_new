@@ -1,1 +1,2 @@
 LAPACKDIR=C:/lapack
+PSIDIR=

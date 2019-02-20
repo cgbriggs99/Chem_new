@@ -33,31 +33,69 @@ double compchem::amu(int z) {
 	return (amus[z - 1]);
 }
 
+int compchem::orbitals(int z) {
+	//Deal with exceptions.
+	switch(z) {
+	case 64:
+	case 71:
+		return (14);
+	case 91:
+	case 92:
+	case 93:
+	case 97:
+	case 103:
+		return (18);
+	}
+
+	if(z == 1 || z == 2) {
+		return (1);
+	}
+	if(z >= 3 && z <= 10) {
+		return (5);
+	}
+	if(z >= 11 && z <= 18) {
+		return (9);
+	}
+	if(z == 19 || z == 20) {
+		return (10);
+	}
+	if(z >= 21 && z <= 30) {
+		return (15);
+	}
+	if(z >= 31 && z <= 36) {
+		return (8);
+	}
+	if(z == 37 || z == 38) {
+		return (9);
+	}
+	if(z >= 39 && z <= 48) {
+		return (10);
+	}
+	if(z >= 49 && z <= 54) {
+		return (11);
+	}
+	if(z == 55 || z == 56) {
+		return (12);
+	}
+	if(z >= 57 && z <= 71) {
+		return (13);
+	}
+	if(z >= 72 && z <= 80) {
+		return (14);
+	}
+	if(z >= 81 && z <= 86) {
+		return (15);
+	}
+	if(z == 87 || z == 88) {
+		return (16);
+	}
+	if(z >= 89 && z <= 103) {
+		return (17);
+	}
+	return (0);
+}
+
 compchem::strategies::DefaultMolecule::~DefaultMolecule()  {
-	if(dists != nullptr) {
-		delete dists;
-	}
-	if(bonds != nullptr) {
-		delete bonds;
-	}
-	if(plane_angles != nullptr) {
-		delete plane_angles;
-	}
-	if(torsion != nullptr) {
-		delete torsion;
-	}
-
-	if(moments != nullptr) {
-		delete moments;
-	}
-
-	if(rotations != nullptr) {
-		delete rotations;
-	}
-
-	if(principle != nullptr) {
-		delete principle;
-	}
 	delete atoms;
 }
 

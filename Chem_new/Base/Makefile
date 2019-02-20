@@ -13,6 +13,6 @@ all: math.o eigenvalues_default_double.o
 clean:
 	$(RM) *.o
 
-math.o: ./math.hpp
+math.o: math.cpp ./math.hpp
 
 eigenvalues_default_double.o: eigenvalues_default_double.cpp eigenvalues_default.hpp eigenvalues.hpp

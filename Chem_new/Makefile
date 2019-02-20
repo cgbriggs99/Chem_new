@@ -2,12 +2,18 @@ include delete.mk
 include psicompile.mk
 
 .PHONY: all
-all: link_dlls molecule base project1 test plugin
+all: link_dlls molecule base project1 test #plugin
 
 .PHONY: test
 test: 
 	$(info Making the tests)
 	$(MAKE) -C ./Test all
+	$(info Finished making the tests)
+	
+.PHONY: rebuild_test
+rebuild_test: 
+	$(info Making the tests)
+	$(MAKE) -B -C ./Test all
 	$(info Finished making the tests)
 	
 .PHONY: molecule
