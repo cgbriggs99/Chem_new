@@ -10,7 +10,7 @@
 
 #include <complex>
 #include "eigenvalues.hpp"
-#include <lapacke.h>
+#include "lapacke.h"
 
 namespace compchem {
 namespace strategies {

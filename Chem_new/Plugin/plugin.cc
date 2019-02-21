@@ -1,7 +1,7 @@
 /*
  * @BEGIN LICENSE
  *
- * Solutions by Connor Briggs, a plugin to:
+ * Plugin Test by Connor Briggs, a plugin to: test psi4 plugin development.
  *
  * Psi4: an open-source quantum chemistry software package
  *
@@ -35,7 +35,7 @@
 #include "psi4/libpsio/psio.hpp"
 #include "psi4/libpsio/psio.hpp"
 
-namespace psi{ namespace solutions {
+namespace psi{ namespace plugin_test {
 
 extern "C" PSI_API
 int read_options(std::string name, Options& options)
@@ -49,9 +49,10 @@ int read_options(std::string name, Options& options)
 }
 
 extern "C" PSI_API
-SharedWavefunction solutions(SharedWavefunction ref_wfn, Options& options)
+SharedWavefunction plugin_test(SharedWavefunction ref_wfn, Options& options)
 {
     int print = options.get_int("PRINT");
+    printf("Hi!");
 
     //ref_wfn.get()->S();
 

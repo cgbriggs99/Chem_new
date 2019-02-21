@@ -1,0 +1,3 @@
+/home/connor/git/Chem_new/Chem_new/Test/plugin_test/CMakeFiles/rebuild_cache.dir
+/home/connor/git/Chem_new/Chem_new/Test/plugin_test/CMakeFiles/plugin_test.dir
+/home/connor/git/Chem_new/Chem_new/Test/plugin_test/CMakeFiles/edit_cache.dir

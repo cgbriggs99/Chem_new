@@ -1,0 +1,83 @@
+
+    -----------------------------------------------------------------------
+          Psi4: An Open-Source Ab Initio Electronic Structure Package
+                               Psi4 1.2.1 
+
+                         Git: Rev {HEAD} 406f4de dirty
+
+
+    R. M. Parrish, L. A. Burns, D. G. A. Smith, A. C. Simmonett,
+    A. E. DePrince III, E. G. Hohenstein, U. Bozkaya, A. Yu. Sokolov,
+    R. Di Remigio, R. M. Richard, J. F. Gonthier, A. M. James,
+    H. R. McAlexander, A. Kumar, M. Saitow, X. Wang, B. P. Pritchard,
+    P. Verma, H. F. Schaefer III, K. Patkowski, R. A. King, E. F. Valeev,
+    F. A. Evangelista, J. M. Turney, T. D. Crawford, and C. D. Sherrill,
+    J. Chem. Theory Comput. 13(7) pp 3185--3197 (2017).
+    (doi: 10.1021/acs.jctc.7b00174)
+
+
+                         Additional Contributions by
+    P. Kraus, H. Kruse, M. H. Lechner, M. C. Schieber, and R. A. Shaw
+
+    -----------------------------------------------------------------------
+
+
+    Psi4 started on: Wednesday, 20 February 2019 09:35PM
+
+    Process ID: 29524
+    Host:       connor-briggs-xubuntu-17
+    PSIDATADIR: /home/connor/psi4/objdir/stage/usr/local/psi4/share/psi4
+    Memory:     500.0 MiB
+    Threads:    1
+    
+  ==> Input File <==
+
+--------------------------------------------------------------------------
+
+# PYTHONPATH must include directory above plugin directory.
+#     Define either externally or here, then import plugin.
+sys.path.insert(0, './..')
+import plugin_test
+
+molecule {
+O
+H 1 R
+H 1 R 2 A
+
+R = .9
+A = 104.5
+}
+
+set {
+  basis sto-3g
+}
+
+set plugin_test {
+  print 1
+}
+
+energy('plugin_test')
+
+plugin_test.exampleFN()
+--------------------------------------------------------------------------
+
+Traceback (most recent call last):
+  File "/home/connor/psi4/objdir/stage/usr/local/psi4/bin/psi4", line 269, in <module>
+    exec(content)
+  File "<string>", line 21, in <module>
+  File "./../plugin_test/__init__.py", line 45, in <module>
+    psi4.core.plugin_load(sofile)
+
+RuntimeError: 
+Fatal Error: load_plugin: Cannot open library: /home/connor/git/Chem_new/Chem_new/Test/plugin_test/plugin_test.so: undefined symbol: _ZN8compchem10TEIAdapter9singletonE
+Error occurred in file: /home/connor/psi4/psi4/src/psi4/libplugin/load_plugin.cc on line: 49
+The most recent 5 function calls were:
+
+psi::PsiException::PsiException(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, char const*, int)
+
+
+    Psi4 stopped on: Wednesday, 20 February 2019 09:35PM
+    Psi4 wall time for execution: 0:00:00.02
+
+*** Psi4 encountered an error. Buy a developer more coffee!
+*** Resources and help at github.com/psi4/psi4.

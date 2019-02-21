@@ -19,7 +19,7 @@ namespace strategies {
 template<typename _T>
 class DefaultWavefunction : public AbstractWavefunction {
 private:
-	compchem::Matrix<double> *_s, *_t, *_v, *_mux, *_muy, *_muz;
+	compchem::Matrix<double> *_s, *_t, *_v, *_mux, *_muy, *_muz, *_ham;
 	double _enuc;
 	compchem::strategies::TEIMatrix<double> *_tei;
 	int n;
@@ -28,17 +28,34 @@ private:
 
 public:
 	DefaultWavefunction(const compchem::AbstractMolecule &mol) {
-		_s = new compchem::Matrix<double>({mol.nelectron(), mol.nelectron()});
-		_t = new compchem::Matrix<double>({mol.nelectron(), mol.nelectron()});
-		_v = new compchem::Matrix<double>({mol.nelectron(), mol.nelectron()});
-		_mux = new compchem::Matrix<double>({mol.nelectron(), mol.nelectron()});
-		_muy = new compchem::Matrix<double>({mol.nelectron(), mol.nelectron()});
-		_muz = new compchem::Matrix<double>({mol.nelectron(), mol.nelectron()});
-		_enuc = 0;
-		_tei = new compchem::strategies::TEIMatrix<double>(mol.nelectron());
-		this->basis = new _T();
 		n = basis->norbitals(mol);
+		_s = new compchem::Matrix<double>({n, n});
+		_t = new compchem::Matrix<double>({n, n});
+		_v = new compchem::Matrix<double>({n, n});
+		_mux = new compchem::Matrix<double>({n, n});
+		_muy = new compchem::Matrix<double>({n, n});
+		_muz = new compchem::Matrix<double>({n, n});
+		_enuc = 0;
+		_tei = new compchem::strategies::TEIMatrix<double>(n);
+		_ham = new compchem::Matrix<double>({n, n});
+		this->basis = new _T();
+
 		elecs = mol.nelectron();
+	}
+
+	DefaultWavefunction(int norbitals, int nelectron) {
+		_s = new compchem::Matrix<double>({norbitals, norbitals});
+		_t = new compchem::Matrix<double>({norbitals, norbitals});
+		_v = new compchem::Matrix<double>({norbitals, norbitals});
+		_mux = new compchem::Matrix<double>({norbitals, norbitals});
+		_muy = new compchem::Matrix<double>({norbitals, norbitals});
+		_muz = new compchem::Matrix<double>({norbitals, norbitals});
+		_enuc = 0;
+		_tei = new compchem::strategies::TEIMatrix<double>(nelectron);
+		this->basis = new _T();
+		n = norbitals;
+		_ham = new compchem::Matrix<double>({n, n});
+		elecs = nelectron;
 	}
 
 	virtual ~DefaultWavefunction() {
@@ -82,6 +99,10 @@ public:
 
 	const compchem::AbstractMatrix<double> &muz() const {
 		return (*_muz);
+	}
+
+	const compchem::AbstractMatrix<double> &h() const {
+		return (*_ham);
 	}
 
 	void setS(double val, int i, int j) {
@@ -149,6 +170,11 @@ public:
 	void setTEI(compchem::strategies::TEIMatrix<double> *__restrict__ mat) {
 		delete _tei;
 		_tei = mat;
+	}
+
+	void setHam(compchem::Matrix<double> *__restrict__ mat) {
+		delete _ham;
+		_ham = mat;
 	}
 
 	int getSize() const {

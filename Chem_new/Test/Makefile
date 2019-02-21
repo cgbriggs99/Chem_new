@@ -2,10 +2,11 @@ include ../Windows/escape.mk
 include ../libs.mk
 include ../suffixes.mk
 include ../delete.mk
+include ../psicompile.mk
 include testcommand.mk
 
 
-CXXFLAGS=-g3 -ggdb -I $(LAPACKDIR)/include
+CXXFLAGS=-g3 -ggdb -I $(LAPACKDIR)/include -I $(PSI)/include -I $(PSI)/include/psi4
 CFLAGS=-g3 -ggdb -I $(LAPACKDIR)/include
 LDFLAGS=-L $(LAPACKDIR)/lib 
 LDLIBS=-llapacke -llapack -lcblas -lblas -lgfortran
@@ -14,7 +15,7 @@ EXECS=test_test$(EXEC) atom_test$(EXEC) matrix_test$(EXEC) matrix_arithmetic_tes
 	ccsd_test$(EXEC) ccsdt_test$(EXEC) diis_scf_test$(EXEC) cis_test$(EXEC) tdhf_test$(EXEC)
 
 .PHONY: all
-all: $(EXECS)
+all: $(EXECS) plugin_test
 	$(info $^)
 
 %$(EXEC): %.cpp
@@ -40,7 +41,7 @@ run_tests: $(EXECS)
 	
 .PHONY: clean
 clean:
-	$(RM) $(EXECS)
+	$(RM) $(EXECS) ./plugin_test/plugin_test.so
 ifneq ($(wildcard $(CURDIR)/logs/*.log),)
 	$(RM) $(call escape,$(wildcard $(CURDIR)/logs/*.log))
 endif
@@ -84,6 +85,13 @@ ccsdt_test$(EXEC): ccsdt_test.cpp ../Project-6/ccsdt.cpp ../Project-6/ccsdt.hpp 
 	../Project-3/scf_default.cpp ../Molecule/molecule_default.hpp ../Base/matrix_default.hpp ../Base/eigenvalues_default.hpp\
 	../Base/matrix.cpp ../Base/eigenvalues_default_double.cpp ../Base/math.cpp ../Molecule/molecule.cpp \
 	../Base/matrix_arithmetic_default.hpp ../Base/matrix_arithmetic_default.cpp test.hpp
+
+
+.PHONY: plugin_test
+plugin_test: ./plugin_test/plugin.cc
+	cd ./plugin_test; `$(PSI)/bin/psi4 --plugin-compile` -DOpenMP_LIBRARY_DIRS="$(LIBOMP)" \
+	-DCMAKE_EXE_LINKER_FLAGS="$(LDFLAGS) $(LDLIBS)"; $(MAKE); $(PSI)/bin/psi4
+
 
 diis_scf_test$(EXEC): diis_scf_test.cpp ../Project-8/diis_scf.hpp ../Project-8/diis_scf_default.cpp \
 	../Project-3/scf_default.hpp ../Project-3/scf_default.cpp test.hpp ../Molecule/molecule_default.hpp \
